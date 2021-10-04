@@ -7,7 +7,6 @@ using MySql.Data.MySqlClient;
 
 namespace GalacticCrew.WebServer.Services.MySQL
 {
-    
     public class QuerySQL
     {
         static private readonly string ConnectionString = "server=localhost;port=3306;userid=test;database=oblig2;SSL Mode=None";
@@ -43,7 +42,6 @@ namespace GalacticCrew.WebServer.Services.MySQL
                         missions.Add(mission);
                         Console.WriteLine(mission.MissionTitle);
                     }
-                   
                 }
                 catch(Exception e)
                 {
@@ -51,8 +49,39 @@ namespace GalacticCrew.WebServer.Services.MySQL
                 }
                 connection.Close();
             }
-            
             return missions;
+        }
+
+        public Profile GetProfileTable(int userID)
+        {
+            string queryText = "Select p.nickName, p.playerLevel, p.currency from player AS p, users AS u where u.UserID = p.UserID AND u.UserID = "+userID+"";
+            Profile profile = new Profile();
+
+            using (var connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(queryText, connection);
+
+                try
+                {
+                    connection.Open();
+                    MySqlDataReader data = cmd.ExecuteReader();
+                    Console.WriteLine("try branch running");
+                    while (data.Read())
+                    {
+                        profile.nickName = data[0].ToString();
+                        profile.playerLevel = (int)data[1];
+                        profile.currency = (int)data[2];
+                        Console.WriteLine(profile.nickName);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+                connection.Close();
+            }
+            return profile;
         }
 
         /// <summary>
