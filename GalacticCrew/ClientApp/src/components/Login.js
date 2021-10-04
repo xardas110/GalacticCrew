@@ -63,7 +63,7 @@ export class Login extends Component
 
     render() {
         return (
-            <form class="form-horizontal" onSubmit={this.OnSubmit}>
+            <form class="form-horizontal" method="post" action="Api/Login">
             <fieldset>
                 <div id="legend">
                     <legend class="">Login</legend>
@@ -81,8 +81,8 @@ export class Login extends Component
                     </div>
                 </div>
                 <div class="control-group">
-                    <div class="controls">
-                            <button class="btn btn-success" disabled={!this.ValidateForm()}>Login</button>
+                        <div class="controls">
+                            <button class="btn btn-success" type="submit" disabled={!this.ValidateForm()}>Login</button>
                     </div>
                 </div>
             </fieldset>

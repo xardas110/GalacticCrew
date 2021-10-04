@@ -69,7 +69,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
             using (var connection = new MySqlConnection(ConnectionString))
             {
                 MySqlCommand cmd = new MySqlCommand(query, connection);
-
+                
                 cmd.Parameters.Add("@Username", MySqlDbType.VarChar, 20).Value = user.UserName;
 
                 try

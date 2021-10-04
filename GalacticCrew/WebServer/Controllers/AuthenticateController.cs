@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 namespace GalacticCrew.WebServer.Controllers
 {
     [Route("Api")]
-    [ApiController]
     public class AuthenticateController : Controller
     {
         public IConfiguration _config { get; }
