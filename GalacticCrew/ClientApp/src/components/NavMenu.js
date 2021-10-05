@@ -38,7 +38,8 @@ export class NavMenu extends Component {
         if (response.status == 200) {
             localStorage.setItem("loggedIn", false);
             localStorage.setItem("userName", null);
-            console.log("On log out if statement")
+            console.log("On log out if statement");
+            window.location.reload();
         }       
     }
 
