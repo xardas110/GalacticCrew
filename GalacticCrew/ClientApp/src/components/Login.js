@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { Redirect } from 'react-router-dom'
 
 export class Login extends Component
 {
@@ -42,28 +42,28 @@ export class Login extends Component
         this.setState({ forecasts: data, loading: false });
     }
 
-    async OnSubmit()
+    async OnSubmit(e)
     {
+        //e.preventDefault();
+
         const response = await fetch('Api/Login',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: "include",
                 body: JSON.stringify(this.state)
             });
 
-        const data = await response.json();
-
-        console.log(data);
-
-        localStorage.setItem('GalacticCrew', JSON.stringify(data));
-
-        let storeage = JSON.parse(localStorage.getItem('GalacticCrew'))
-        console.log(storeage);
+        if (response.status === 200) {
+            const data = await response.json();
+            localStorage.setItem("loggedIn", true);
+            return <Redirect to="/" />
+        }
     }
 
     render() {
         return (
-            <form class="form-horizontal" method="post" action="Api/Login">
+            <form class="form-horizontal" onSubmit={this.OnSubmit}>
             <fieldset>
                 <div id="legend">
                     <legend class="">Login</legend>

@@ -1,5 +1,6 @@
 ﻿using GalacticCrew.WebServer.Models;
 using GalacticCrew.WebServer.Services.Methods;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace GalacticCrew.WebServer.Controllers
 {
+    [ApiController]
     [Route("Api")]
     public class AuthenticateController : Controller
     {
@@ -31,8 +33,13 @@ namespace GalacticCrew.WebServer.Controllers
             {
                 var tokenString = _securityService.GenerateJSONWebToken(user);
                 response = Ok(new { token = tokenString });
-                
+
+                Response.Cookies.Append("GalacticCrew", tokenString, new CookieOptions
+                {
+                    HttpOnly = true,
+                });
             }
+            
             return response;
         }
 
@@ -43,21 +50,31 @@ namespace GalacticCrew.WebServer.Controllers
         }
 
         [HttpGet("User")]
-        public IActionResult UserInfo(string jwtString)
-        {
+        public IActionResult UserInfo()
+        {          
             try
-            { 
+            {
+                var jwtString = Request.Cookies["GalacticCrew"];
+                Console.WriteLine("JWT string: " + jwtString);
                 var validatedToken = _securityService.Verify(jwtString);
 
                 var userName = validatedToken.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault().Value;
-                return Ok("Token validation succeeded");
+                Console.WriteLine("Username from userget: " + userName);
+                return Ok(new {userName = userName });
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.ToString());
                 return BadRequest(e.ToString());
-            }
-            
+            }           
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("GalacticCrew");
+
+            return Ok("success");
         }
 
     }

@@ -25,7 +25,7 @@ namespace GalacticCrew
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors();
+            services.AddCors();
 
             services.AddControllersWithViews();
 
@@ -81,7 +81,7 @@ namespace GalacticCrew
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-           // app.UseCors(options => options.WithOrigins(new[] {"http://localhost:5001" }).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+            app.UseCors(options => options.WithOrigins(new[] {"http://localhost:5001" }).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
             app.UseEndpoints(endpoints =>
             {

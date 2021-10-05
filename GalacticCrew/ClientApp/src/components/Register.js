@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 
 
 export class Register extends Component
 {
     static displayName = Register.name;
-
     constructor(props) {
         super(props);
 
@@ -17,15 +16,19 @@ export class Register extends Component
         this.OnPasswordChange = this.OnPasswordChange.bind(this);
         this.OnPasswordConfirmChange = this.OnPasswordConfirmChange.bind(this);
         this.OnUserNameChange = this.OnUserNameChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     OnUserNameChange(e) {
+
         this.setState({
             userName: e.target.value
         });
+
     }
 
     OnPasswordChange(e) {
+
         this.setState({
             password: e.target.value
         });
@@ -37,15 +40,34 @@ export class Register extends Component
         });
     }
 
+    
     ValidateForm() {
         return this.state.password === this.state.confirmPassword && this.state.userName.length > 2;
     }
+    
+
+    async onSubmit(e) {
+        e.preventDefault();
+
+        const response = await fetch('Api/Register',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userName: this.state.userName,
+                    password: this.state.password
+                })
+            });
+
+        const data = await response.json();
+
+    }
+
 
     render() {
-        console.log(this.userName);
+
         return (
-            
-            <form class="form-horizontal" action='/Api/Register' method="POST">
+            <form class="form-horizontal" onSubmit={this.onSubmit}>
             <fieldset>
                 <div id="legend">
                     <legend class="">Register</legend>
@@ -76,8 +98,8 @@ export class Register extends Component
                     </div>
                 </div>
                 <div class="control-group">
-                    <div class="controls">
-                            <button class="btn btn-success" type="submit" disabled={!this.ValidateForm()}>Register</button>
+                        <div class="controls">
+                            <button class="btn btn-success" type="submit" /*disabled={!this.ValidateForm()}*/>Register</button>
                     </div>
                 </div>
             </fieldset>

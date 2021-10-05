@@ -10,10 +10,10 @@ namespace GalacticCrew.WebServer.Models
 {
     public class User
     {
-        [StringLength(50, MinimumLength = 3)]
+       // [StringLength(50, MinimumLength = 3)]
         [Required]
         public string UserName { get; set; }
-        [StringLength(50, MinimumLength = 5)]
+       // [StringLength(50, MinimumLength = 5)]
         [Required]
         public string Password { get; set; }
     }
