@@ -22,16 +22,13 @@ export class Home extends Component {
         //let content = this.state.LoggedIn ? this.welcome(this.state.UserName) : "You are not logged in"
     return (
       <div>
-            <h1>Hello battlestar crew </h1>
-           
+            <h1>Hello battlestar crew </h1>         
         <p>Todo List:</p>
         <ul>
           <li>Create register and login page with JWT token</li>
           <li>Redirect user to pilot page</li>
           <li>Create pilot interface</li>
             </ul>
-
-            <p>Hey! you are logged in as: {this.props.data.userName}</p>
       </div>
     );
     }

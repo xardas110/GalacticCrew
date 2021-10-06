@@ -16,5 +16,20 @@ namespace GalacticCrew.WebServer.Models
        // [StringLength(50, MinimumLength = 5)]
         [Required]
         public string Password { get; set; }
+
     }
+    public class UserIDName
+    {
+        public int UserID { get; set; }
+        public string UserName { get; set; }
+    }
+
+    public class PlayerProfile
+    {
+        public string NickName;
+        int PlayerLevel;
+        int Currency;
+        int RankID;
+    }
+
 }

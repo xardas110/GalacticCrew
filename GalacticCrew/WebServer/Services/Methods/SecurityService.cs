@@ -23,7 +23,12 @@ namespace GalacticCrew.WebServer.Services.Methods
             _mySQL = querySQL;
         }
 
-        public bool ValidateLogin(User user)
+        /// <summary>
+        /// Checks if login information 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public int ValidateLogin(User user)
         {
             return _mySQL.AuthenticateLogin(user);
         }
@@ -36,7 +41,7 @@ namespace GalacticCrew.WebServer.Services.Methods
             return _mySQL.CreateUser(user);
         }
 
-        public string GenerateJSONWebToken(User user)
+        public string GenerateJSONWebToken(User user, int userID)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTSecretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -44,7 +49,8 @@ namespace GalacticCrew.WebServer.Services.Methods
             //TODO: replace userName with userID
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName)
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.NameId, Convert.ToString(userID))
             };
 
             var token = new JwtSecurityToken(JWTIssuer,
@@ -71,6 +77,26 @@ namespace GalacticCrew.WebServer.Services.Methods
             }, out SecurityToken validatedToken);
 
             return (JwtSecurityToken)validatedToken;
+        }
+
+        public UserIDName VerifyAndGetClaims(string jwt)
+        {
+            try
+            {
+                UserIDName uIDName = new UserIDName();
+
+                var validatedToken = Verify(jwt);
+
+                uIDName.UserName = validatedToken.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault().Value;
+                uIDName.UserID = Convert.ToInt32(validatedToken.Claims.Where(x => x.Type == JwtRegisteredClaimNames.NameId).FirstOrDefault().Value);
+
+                return uIDName;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return null;
+            }
         }
     }
 }

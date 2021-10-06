@@ -28,11 +28,11 @@ namespace GalacticCrew.WebServer.Controllers
         public IActionResult Login(User user)
         {
             IActionResult response = Unauthorized();
-
-            if (_securityService.ValidateLogin(user))
+            int userID = _securityService.ValidateLogin(user);
+            if (userID != -1)
             {
-                var tokenString = _securityService.GenerateJSONWebToken(user);
-                response = Ok(new { token = tokenString });
+                var tokenString = _securityService.GenerateJSONWebToken(user, userID);
+                response = Ok(new { userName = user.UserName });
 
                 Response.Cookies.Append("GalacticCrew", tokenString, new CookieOptions
                 {
@@ -59,8 +59,10 @@ namespace GalacticCrew.WebServer.Controllers
                 var validatedToken = _securityService.Verify(jwtString);
 
                 var userName = validatedToken.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault().Value;
-                Console.WriteLine("Username from userget: " + userName);
-                return Ok(new {userName = userName });
+                int userID = Convert.ToInt32(validatedToken.Claims.Where(x => x.Type == JwtRegisteredClaimNames.NameId).FirstOrDefault().Value);
+
+                Console.WriteLine("Username from userget: " + userName + " userID: " + userID);
+                return Ok(new {userName = userName, userID = userID});
             }
             catch(Exception e)
             {
@@ -74,7 +76,7 @@ namespace GalacticCrew.WebServer.Controllers
         {
             Response.Cookies.Delete("GalacticCrew");
 
-            return Ok("success");
+            return Redirect("/profile");
         }
 
     }

@@ -91,10 +91,10 @@ namespace GalacticCrew.WebServer.Services.MySQL
         /// <returns>
         /// @returns true if user credentials match otherwise false.
         /// </returns>
-        public bool AuthenticateLogin(User user)
+        public int AuthenticateLogin(User user)
         {
-            string query = "select username, password from users where username = @UserName";
-            bool bSuccess = false;
+            string query = "select username, password, UserID from users where username = @UserName";
+            int iSuccess = -1;
             using (var connection = new MySqlConnection(ConnectionString))
             {
                 MySqlCommand cmd = new MySqlCommand(query, connection);
@@ -106,10 +106,11 @@ namespace GalacticCrew.WebServer.Services.MySQL
                     connection.Open();
                     MySqlDataReader data = cmd.ExecuteReader();
 
-                    //Usernames inside mysql are set to unique, this should be safe 
+                    //Usernames inside mysql are set to unique, no checks needed here
                     while (data.Read())
                     {
-                        bSuccess = BCrypt.Net.BCrypt.Verify(user.Password, data[1].ToString());
+                        if (BCrypt.Net.BCrypt.Verify(user.Password, data[1].ToString()))
+                            iSuccess = (int)data[2];
                         break;
                     }
                 }
@@ -119,7 +120,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                 }
                 connection.Close();
             }
-            return bSuccess;
+            return iSuccess;
         }
 
         /// <summary>

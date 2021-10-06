@@ -60,7 +60,6 @@ export class Register extends Component
             });
 
         const data = await response.json();
-
     }
 
 

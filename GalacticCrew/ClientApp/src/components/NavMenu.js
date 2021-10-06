@@ -11,8 +11,10 @@ export class NavMenu extends Component {
         super(props);
 
         this.toggleNavbar = this.toggleNavbar.bind(this);
+        this.OnLogout = this.OnLogout.bind(this);
 
         this.state = {
+            loggedIn:false,
             collapsed: true,
         };
 
@@ -26,8 +28,8 @@ export class NavMenu extends Component {
         });
     }
 
-    async OnLogout(e) {
-        const response = await fetch('Api/Logout',
+    OnLogout(e) {
+        const response = fetch('Api/Logout',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -35,12 +37,12 @@ export class NavMenu extends Component {
             });
 
         console.log("Onlogout running");
-        if (response.status == 200) {
-            localStorage.setItem("loggedIn", false);
-            localStorage.setItem("userName", null);
-            console.log("On log out if statement");
-            window.location.reload();
-        }       
+
+        localStorage.setItem("loggedIn", false);
+        localStorage.setItem("userName", null);
+        console.log("Onlogout await response");
+        this.setState({ loggedIn: false });
+      
     }
 
 
@@ -72,8 +74,8 @@ export class NavMenu extends Component {
     }
 
     GetLoggedIn(username) {
-        return (<header>
-            <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
+        return (
+          <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
                 <Container>
                     <NavbarBrand tag={Link} to="/">GalacticCrew</NavbarBrand>
                     <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
@@ -86,31 +88,91 @@ export class NavMenu extends Component {
                                 <NavLink tag={Link} className="text-dark" to="/Missionpanel">Mission Panel(only for testing)</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} className="text-dark" to="/Api/Profile">Signed in as: {username }</NavLink>
+                                <NavLink tag={Link} className="text-dark" to="/Profile">Signed in as: {username}</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} className="text-dark" onClick={this.OnLogout } to="/Home">Logout</NavLink>
-                            </NavItem>
-                        </ul>
+                                <NavLink tag={Link} className="text-dark" onClick={this.OnLogout } to="/">Logout</NavLink>
+                            </NavItem>                          
+                        </ul>                   
                     </Collapse>
                 </Container>
             </Navbar>
-        </header>)
+        )
     }
+    GetNewSideBarLoggedOut() {
+        return (<header className="mainheader">
+            <Navbar className="sidebar">
+                <Container>
+                    <NavbarBrand tag={Link} to="/">GalacticCrew</NavbarBrand>
+                    <ul className="navbar-nav flex-grow">
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/Missionpanel">Mission Panel(only for testing)</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/Login">Login</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/Register">Register</NavLink>
+                        </NavItem>
+                    </ul>
+                </Container>
+            </Navbar>
+            <Navbar className="sidebar1">
+                <Container>
+                    <ul className="navbar-nav flex-grow">
+                        <NavbarBrand tag={Link} to="/">Not logged in</NavbarBrand>
+                    </ul>
+                </Container>
+            </Navbar>
+        </header>)              
+    }
+
+    GetNewSideBarLoggedIn(userName) {
+        return (<header className="mainheader">
+            <Navbar className="sidebar">
+            <Container>
+                <NavbarBrand tag={Link} to="/">GalacticCrew</NavbarBrand>
+                    <ul className="navbar-nav flex-grow">
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/Missionpanel">Mission Panel(only for testing)</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/Profile">Signed in as: {userName}</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" onClick={this.OnLogout} to="/">Logout</NavLink>
+                        </NavItem>
+                    </ul>                   
+            </Container>
+            </Navbar>
+            <Navbar className="sidebar1">
+                <Container>
+                    <NavLink tag={Link} to="/Profile"><h1>{userName}</h1></NavLink>
+                    <ul className="navbar-nav flex-grow">
+                    </ul>
+                </Container>
+            </Navbar>
+        </header>)              
+    }
+
 
 
     render() {
         let content;
 
-        console.log(localStorage.getItem("loggedIn"));
 
         if (localStorage.getItem("loggedIn") == "true") {
-            content = this.GetLoggedIn(localStorage.getItem("userName"));
+            content = this.GetNewSideBarLoggedIn(localStorage.getItem("userName"));
         }
         else {
-            content = this.GetLoggedOut();
+            content = this.GetNewSideBarLoggedOut();
         }
-
         return content;       
     }
 }
