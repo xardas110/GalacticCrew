@@ -24,6 +24,10 @@ namespace GalacticCrew.WebServer.Models
         public string UserName { get; set; }
     }
 
+    public class UserName
+    {
+        public string userName { get; set; }
+    }
     public class PlayerProfile
     {
         public string NickName;

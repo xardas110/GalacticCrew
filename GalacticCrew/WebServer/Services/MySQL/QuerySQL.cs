@@ -9,7 +9,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
 {
     public class QuerySQL
     {
-        static private readonly string ConnectionString = "server=localhost;port=3306;userid=test;database=oblig2;SSL Mode=None";
+        static private readonly string ConnectionString = "server=87.248.13.40;port=3306;userid=test;database=oblig2;SSL Mode=None";
 
         /// <summary>
         /// This function will get all data rows based on Missions struct from missions table
@@ -52,32 +52,68 @@ namespace GalacticCrew.WebServer.Services.MySQL
             return missions;
         }
 
+        public bool CreatePlayerByNickname(string nickname, int userid)
+        {
+            string queryText = "call sp_CreateNickname(@userID, @nickname)";
+            bool bSuccess = false;
+
+            using (var connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(queryText, connection);
+                
+                cmd.Parameters.Add("@userID", MySqlDbType.Int32, 11).Value = userid;
+                cmd.Parameters.Add("@nickname", MySqlDbType.VarChar, 20).Value = nickname;
+
+                try
+                {
+
+                    connection.Open();
+
+                    if (cmd.ExecuteNonQuery() != -1)
+                        bSuccess = true;
+                    else
+                        bSuccess = false;
+ 
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    return bSuccess;
+                }
+                connection.Close();
+            }
+            return bSuccess;
+        }
+    
         public Profile GetProfileTable(int userID)
         {
-            string queryText = "Select p.nickName, p.playerLevel, p.currency from player AS p, users AS u where u.UserID = p.UserID AND u.UserID = "+userID+"";
+            string queryText = "call sp_GetProfileByUserID(@userID)";
             Profile profile = new Profile();
 
             using (var connection = new MySqlConnection(ConnectionString))
             {
                 MySqlCommand cmd = new MySqlCommand(queryText, connection);
 
+                cmd.Parameters.Add("@userID", MySqlDbType.Int32, 11).Value = userID;
+
                 try
                 {
                     connection.Open();
                     MySqlDataReader data = cmd.ExecuteReader();
-                    Console.WriteLine("try branch running");
+
                     while (data.Read())
                     {
                         profile.nickName = data[0].ToString();
                         profile.playerLevel = (int)data[1];
                         profile.currency = (int)data[2];
-                        Console.WriteLine(profile.nickName);
                     }
 
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
+                    return null;
                 }
                 connection.Close();
             }

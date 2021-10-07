@@ -41,6 +41,14 @@ namespace GalacticCrew.WebServer.Services.Methods
             return _mySQL.CreateUser(user);
         }
 
+        public Profile GetProfileByID(int userID)
+        {
+           return _mySQL.GetProfileTable(userID);
+        }
+        public bool CreatePlayerByNickname(string nickname, int userid)
+        {
+            return _mySQL.CreatePlayerByNickname(nickname, userid);
+        }
         public string GenerateJSONWebToken(User user, int userID)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTSecretKey));

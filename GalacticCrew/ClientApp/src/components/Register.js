@@ -59,7 +59,12 @@ export class Register extends Component
                 })
             });
 
-        const data = await response.json();
+        if (response.status === 200) {
+            console.log("Register success");
+        }
+        else {
+            console.log("register failed");
+        }
     }
 
 

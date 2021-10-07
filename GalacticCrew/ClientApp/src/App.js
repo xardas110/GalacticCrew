@@ -4,6 +4,7 @@ import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { MissionPanel } from './components/MissionPanel';
 import { Register } from './components/Register';
+import { Profile } from './components/Profile';
 import { Login } from './components/Login';
 import { Container } from 'reactstrap';
 import './custom.css'
@@ -47,7 +48,8 @@ export default class App extends Component {
                     <Route exact path='/' component={() => <Home data={{ userName: this.state.UserName, loggedIn: this.state.LoggedIn }} />} />
                     <Route path='/MissionPanel' component={MissionPanel} />
                     <Route path='/Register' component={Register} />
-                    <Route path='/Login' component={() => <Login data={{ navMenu: this.state.navMenu, loggedIn: (bLogIn) => { this.setState({loggedIn:bLogIn }) } }} />} />                 
+                    <Route path='/Login' component={() => <Login data={{ navMenu: this.state.navMenu, loggedIn: (bLogIn) => { this.setState({ loggedIn: bLogIn }) } }} />} />
+                    <Route path='/Profile' component={Profile} />
                     </Container>
                 </BrowserRouter>
             

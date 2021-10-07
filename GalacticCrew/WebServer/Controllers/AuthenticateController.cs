@@ -44,9 +44,50 @@ namespace GalacticCrew.WebServer.Controllers
         }
 
         [HttpPost("Register")]
-        public bool Register(User user)
+        public IActionResult Register(User user)
         {
-            return _securityService.ValidateRegister(user);
+            if (_securityService.ValidateRegister(user))
+                return Ok();
+            return BadRequest();
+        }
+
+        [HttpPost("CreatePlayer")]
+        public IActionResult CreateUser(UserName userName)
+        {
+            try
+            {
+                Console.WriteLine("trying to create a new user: " + userName.userName);
+                UserIDName uIDN = new UserIDName();
+                var tokenString = Request.Cookies["GalacticCrew"];
+                uIDN =_securityService.VerifyAndGetClaims(tokenString);
+
+                if (_securityService.CreatePlayerByNickname(userName.userName, uIDN.UserID))
+                    return Ok();
+                return NotFound();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet("Profile")]
+        public IActionResult Profile()
+        {
+            try
+            {
+                Console.WriteLine("Profile api running");
+                var tokenString = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(tokenString);
+                return Ok(_securityService.GetProfileByID(uIDN.UserID));
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return BadRequest(e.ToString());
+            }
         }
 
         [HttpGet("User")]
