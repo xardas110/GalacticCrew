@@ -80,6 +80,16 @@ namespace GalacticCrew.WebServer.Controllers
                 Console.WriteLine("Profile api running");
                 var tokenString = Request.Cookies["GalacticCrew"];
                 UserIDName uIDN = _securityService.VerifyAndGetClaims(tokenString);
+
+                if (uIDN == null)
+                    return BadRequest();
+
+                Profile profile = new Profile();
+                profile = _securityService.GetProfileByID(uIDN.UserID);
+
+                if (profile == null)
+                    return NotFound();
+
                 return Ok(_securityService.GetProfileByID(uIDN.UserID));
 
             }

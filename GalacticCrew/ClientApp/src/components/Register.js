@@ -10,7 +10,8 @@ export class Register extends Component
         this.state = {
             userName : "userName",
             password : "1",
-            confirmPassword : "",
+            confirmPassword: "",
+            bRegister:false
         }
 
         this.OnPasswordChange = this.OnPasswordChange.bind(this);
@@ -61,6 +62,7 @@ export class Register extends Component
 
         if (response.status === 200) {
             console.log("Register success");
+            this.setState({ bRegister: true });
         }
         else {
             console.log("register failed");
@@ -104,7 +106,8 @@ export class Register extends Component
                 <div class="control-group">
                         <div class="controls">
                             <button class="btn btn-success" type="submit" /*disabled={!this.ValidateForm()}*/>Register</button>
-                    </div>
+                        </div>
+                        {this.state.bRegister?(<h1>success</h1>):(<h1></h1>)}
                 </div>
             </fieldset>
         </form>)

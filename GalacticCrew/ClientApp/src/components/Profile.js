@@ -27,10 +27,13 @@ export class Profile extends Component {
 
         if (response.status == 200) {
             const data = await response.json();
-
-            if (response.nickName != "") {
+            console.log("Response ok inside fetch profile data");
+            console.log(data);
+            if (data.nickName != null) {
                 this.setState({
-                    nickName: response.nickName,
+                    nickName: data.nickName,
+                    playerLevel: data.playerLevel,
+                    currency:data.currency,
                     hasNickname: true
                 })
             }
@@ -87,14 +90,16 @@ export class Profile extends Component {
         </form>)
     }
 
-    GetProfile(nickname) {
-        return (<p> You have a nickname: { nickname } </p>)
+    GetProfile(nickname, level, currency) {
+        return (<div><p> You have a nickname: {nickname} </p>
+                <p> level: { level } </p>
+                <p> currency: { currency } </p> </div>)
     }
 
     render() {
 
         let content;
-        content = this.state.hasNickname ? this.GetProfile(this.state.nickName) : this.GetNicknameForm();
+        content = this.state.hasNickname ? this.GetProfile(this.state.nickName, this.state.playerLevel, this.state.currency) : this.GetNicknameForm();
 
         return content;
     }
