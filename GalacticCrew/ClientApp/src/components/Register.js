@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-
+import { Redirect } from 'react-router-dom'
 
 export class Register extends Component
 {
@@ -8,48 +8,23 @@ export class Register extends Component
         super(props);
 
         this.state = {
-            userName : "userName",
-            password : "1",
+            userName : "",
+            password : "",
             confirmPassword: "",
-            bRegister:false
+            bRegister: false        
         }
-
+        
         this.OnPasswordChange = this.OnPasswordChange.bind(this);
         this.OnPasswordConfirmChange = this.OnPasswordConfirmChange.bind(this);
         this.OnUserNameChange = this.OnUserNameChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+       
     }
-
-    OnUserNameChange(e) {
-
-        this.setState({
-            userName: e.target.value
-        });
-
-    }
-
-    OnPasswordChange(e) {
-
-        this.setState({
-            password: e.target.value
-        });
-    }
-
-    OnPasswordConfirmChange(e) {
-        this.setState({
-            confirmPassword: e.target.value
-        });
-    }
-
-    
-    ValidateForm() {
-        return this.state.password === this.state.confirmPassword && this.state.userName.length > 2;
-    }
-    
 
     async onSubmit(e) {
-        e.preventDefault();
 
+        e.preventDefault();
+        
         const response = await fetch('Api/Register',
             {
                 method: 'POST',
@@ -60,17 +35,22 @@ export class Register extends Component
                 })
             });
 
-        if (response.status === 200) {
-            console.log("Register success");
-            this.setState({ bRegister: true });
-        }
-        else {
-            console.log("register failed");
-        }
+        console.log(response.status);
+
+        if (response.status === 200) {              
+            this.setState({ bRegister: true });   
+        }    
     }
 
 
     render() {
+
+        if (this.props.loggedIn)
+            return <Redirect to="/Profile"/>
+
+        if (this.bRegister) {
+            setTimeout(e => { return(<Redirect to="/Login"/>) }, 1000)
+        }
 
         return (
             <form class="form-horizontal" onSubmit={this.onSubmit}>
@@ -107,9 +87,34 @@ export class Register extends Component
                         <div class="controls">
                             <button class="btn btn-success" type="submit" /*disabled={!this.ValidateForm()}*/>Register</button>
                         </div>
-                        {this.state.bRegister?(<h1>success</h1>):(<h1></h1>)}
+                        {this.state.bRegister?(<h1>Success! Redirecting in 2 sec...</h1>):(<h1></h1>)}
                 </div>
             </fieldset>
-        </form>)
+            </form>)
+    }
+    OnUserNameChange(e) {
+
+        this.setState({
+            userName: e.target.value
+        });
+
+    }
+
+    OnPasswordChange(e) {
+
+        this.setState({
+            password: e.target.value
+        });
+    }
+
+    OnPasswordConfirmChange(e) {
+        this.setState({
+            confirmPassword: e.target.value
+        });
+    }
+
+
+    ValidateForm() {
+        return this.state.password === this.state.confirmPassword && this.state.userName.length > 2 && this.state.password.length > 2;
     }
 }

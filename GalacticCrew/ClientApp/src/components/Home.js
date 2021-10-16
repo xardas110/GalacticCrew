@@ -6,18 +6,8 @@ export class Home extends Component {
     constructor(props) {
         super(props)
 
-        console.log("props: ")
-        console.log(props);
-
     }
  
-
-    welcome(username) {
-        return (
-            <p> Welcome {username} </p>
-            )
-    }
-
     render() {
         //let content = this.state.LoggedIn ? this.welcome(this.state.UserName) : "You are not logged in"
     return (

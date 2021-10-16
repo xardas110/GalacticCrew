@@ -1,0 +1,20 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+.headerTable {
+    background-color: #520000db;
+    color: white;
+}
+
+#myShipsContainer {
+    height: 1000px;
+    margin-top: 7%;
+    border: thick solid;
+    border-color: gray;
+    background-color: #15091fe6;
+}
+#myShipsHeader{
+    text-align:center;
+}
+#myShipPanel {
+    margin-top:5%;
+}

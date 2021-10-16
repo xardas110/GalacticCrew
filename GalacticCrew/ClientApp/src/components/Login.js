@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { Next } from 'react-bootstrap/esm/PageItem';
 import { Redirect } from 'react-router-dom'
-import { NavMenu } from './NavMenu';
 
 export class Login extends Component
 {
@@ -12,45 +12,42 @@ export class Login extends Component
         this.state = {
             userName : "",
             password: "",
-            loggedIn: false
+            loggedIn: this.props.loggedIn,
+            goto:false
         }
 
         this.OnPasswordChange = this.OnPasswordChange.bind(this);
         this.OnUserNameChange = this.OnUserNameChange.bind(this);
-        this.OnSubmit = this.OnSubmit.bind(this);
-    
+        this.OnSubmit = this.OnSubmit.bind(this);    
+
+        console.log("login constructor");
+        console.log(props);
+
     }
 
-    OnUserNameChange(e) {
-        this.setState({
-            userName: e.target.value
-        });
-    }
+    async GetOnLoginData() {
 
-    OnPasswordChange(e) {
-        this.setState({
-            password: e.target.value
-        });
-    }
+        const response = await fetch('Api/OnLogin',
+            {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "include",
+            });
 
+        console.log(response.status);
 
-    ValidateForm() {
-        return this.state.password && this.state.userName;
-    }
-
-    async populateWeatherData() {
-        const response = await fetch('Missions/AllMissions');
-        const data = await response.json();
-        this.setState({ forecasts: data, loading: false });
+        if (response.status == 200) {
+            const data = await response.json();
+            return data;
+        } else {
+            return null;
+        }
     }
 
     async OnSubmit(e)
-    {
+    {  
         e.preventDefault();
-
+       
         let loginInfo = JSON.stringify(this.state);
-
-        console.log(loginInfo);
 
         const response = await fetch('Api/Login',
             {
@@ -60,23 +57,30 @@ export class Login extends Component
                 body: loginInfo
             });
 
+        console.log(response.status);
+
         if (response.status === 200) {
-            const data = await response.json();
-            localStorage.setItem("loggedIn", true);
-            localStorage.setItem("userName", data.userName);
-            console.log("On log in submit response: ");
-            console.log(data);
+            var user = await this.GetOnLoginData();
 
-            this.setState({
-                loggedIn: true
-            });
-
-            //To update navigation bar
-            this.props.data.loggedIn(true);
-
-        } else {
-            this.setState({ loggedIn: "failed" });
+            if (user != null) {
+                //To update navigation bar
+                console.log(user);
+                user.loggedIn = true;
+                this.props.setUser(user);
+            }
+            else {
+                console.log("Failed to log in");
+            }
         }
+    }
+
+    componentWillReceiveProps(nextProp) {
+        console.log("componentWillReceiveProps LOGIN");
+        console.log(nextProp);
+    }
+
+    componentWillUnmount() {
+        console.log("componentWillUnmount LOGIN");        
     }
 
 
@@ -114,9 +118,29 @@ export class Login extends Component
 
     render() {
 
-        let content;
+        if (this.state.loggedIn)
+            return (<Redirect to="/profile" />);
 
-        content = localStorage.getItem("loggedIn") == "true" ? this.GetLoggedInForm() : this.GetLogInForm();
+        let content;
+        content = this.state.loggedIn ? this.GetLoggedInForm() : this.GetLogInForm();
         return content;
     }
+
+    OnUserNameChange(e) {
+        this.setState({
+            userName: e.target.value
+        });
+    }
+
+    OnPasswordChange(e) {
+        this.setState({
+            password: e.target.value
+        });
+    }
+
+
+    ValidateForm() {
+        return this.state.password && this.state.userName;
+    }
+
 }

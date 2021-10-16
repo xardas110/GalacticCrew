@@ -1,0 +1,24 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+.shipInfo {
+    width: 100%;
+    height: 100%;
+    border: solid thick;
+    border-color: #52000047;
+    background-color: #0f0f1099;
+    color: #ffffffcc;
+    font-family: monospace;
+    border-collapse: collapse;
+}
+
+.infoText{
+    float: left;
+    height: 25%;
+    width: 60%;
+}
+
+.statusText {
+    float: right;
+    height: 25%;
+    width: 40%;
+}

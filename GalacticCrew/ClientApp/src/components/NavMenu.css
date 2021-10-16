@@ -1,15 +1,63 @@
-﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
-
+﻿
 /* The side navigation menu */
 .sidebar {
     margin: 0;
     padding: 0;
     width: 10%;
-    background-color: #f1f1f1;
     position: fixed;
     height: 100%;
     overflow: auto;
+    background-color:black;
+    color:white !important;
+    align-content: space-between;
+    justify-content:space-around !important;
+    border: thick solid;
+    border-color:gray;
 }
+
+#leftSidebarTitle {
+    height: 10%;
+    margin-left: 5%;
+    text-align: center;
+    font: larger;
+    width: 120%;
+    margin-top: 10%;
+}
+
+.leftSidebarItem {
+    margin-left: 3%;
+    border: solid thick;
+    border-color: gray;
+    align-content: flex-start;
+    text-align: center;
+    font-size: large;
+}
+
+#leftSidebarProfile {
+    border: solid thick;
+    border-color: gray;
+}
+
+#leftSidebarMissionPanel {
+    margin-top: 40%;
+}
+
+#leftSidebarMissionStatus {
+    margin-top: 40%;
+}
+
+#leftSidebarMarket {
+    margin-top: 40%;
+}
+#leftSidebarMyShips {
+    margin-top: 40%;
+}
+#leftSidebarLogout {
+    text-align: center;
+    margin-top: 250%;
+    font-size: large;
+}
+
 .stationbar {
     shape-margin: inherit;
     margin-left: 20%;
@@ -21,15 +69,18 @@
 .navbar {
     align-items: start !important;
     position: absolute !important;
+    padding: unset !important;
 }
 .sidebar1 {
     margin-left: 90%;
     padding: 0;
     width: 10%;
-    background-color: #f1f1f1;
+    background-color: black;
     position: fixed;
     height: 100%;
     overflow: auto;
+    align-content:flex-start !important;
+
 }
 body {
     overflow-x: hidden;
@@ -54,53 +105,118 @@ body {
 /* Sidebar Styles */
 
 #sidebar {
-    z-index: 1000;
-    position: fixed;
-    left: 250px;
-    width: 250px;
-    height: 100%;
-    margin-left: -250px;
-    overflow-y: auto;
-    background: #37474F;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+z-index: 1000;
+position: fixed;
+left: 250px;
+width: 250px;
+height: 100%;
+margin-left: -250px;
+overflow-y: auto;
+background: #37474F;
+-webkit-transition: all 0.5s ease;
+-moz-transition: all 0.5s ease;
+-o-transition: all 0.5s ease;
+transition: all 0.5s ease;
 }
 
-    #sidebar header {
-        background-color: #263238;
-        font-size: 20px;
-        line-height: 52px;
-        text-align: center;
+#sidebar header {
+background-color: #263238;
+font-size: 20px;
+line-height: 52px;
+text-align: center;
+}
+
+#sidebar header a {
+color: #fff;
+display: block;
+text-decoration: none;
+}
+
+#sidebar header a:hover {
+    color: #fff;
+}
+
+#sidebar .nav {
+}
+
+#sidebar .nav a {
+    background: none;
+    border-bottom: 1px solid #455A64;
+    color: #CFD8DC;
+    font-size: 14px;
+    padding: 16px 24px;
+}
+
+    #sidebar .nav a:hover {
+        background: none;
+        color: #ECEFF1;
     }
 
-        #sidebar header a {
-            color: #fff;
-            display: block;
-            text-decoration: none;
-        }
-
-            #sidebar header a:hover {
-                color: #fff;
-            }
-
-    #sidebar .nav {
+    #sidebar .nav a i {
+        margin-right: 16px;
     }
 
-        #sidebar .nav a {
-            background: none;
-            border-bottom: 1px solid #455A64;
-            color: #CFD8DC;
-            font-size: 14px;
-            padding: 16px 24px;
-        }
 
-            #sidebar .nav a:hover {
-                background: none;
-                color: #ECEFF1;
-            }
+.rightSidebarContainer{
+    width:100%;
+}
 
-            #sidebar .nav a i {
-                margin-right: 16px;
-            }
+a{
+    color:darkviolet !important;
+}
+
+.rightSidebarUserName {
+    text-align:center;
+    margin-top: 10%;
+    width: 100%;
+}
+
+.rightSidebarRankType{
+    height:7%;
+    width:100%;
+    text-align:center;
+    color:aquamarine;  
+}
+
+.rightSidebarPlayerLevel {
+    height: 25%;
+    width: 100%;
+    text-align: center;
+    flex-wrap:wrap;
+
+}
+.rightSidebarCircular{
+    text-align:center;
+    margin-left:30%;
+    width:40%;
+    height:40%;
+}
+
+.rightSidebarShips {
+    width: 100%;
+    text-align:center;
+}
+
+#currentShipText{
+    color:green;
+}
+
+#shipText{
+    color:darkred;
+}
+
+.CircularProgressbar-path {
+    stroke: darkred !important;
+}
+
+.CircularProgressbar-trail {
+    stroke: gray !important;
+}
+
+.CircularProgressbar-text {
+    fill: yellow;
+}
+
+.CircularProgressbar-background {
+    fill: green;
+}

@@ -1,6 +1,8 @@
 /* Provide sufficient contrast against white background */
+
 a {
-  color: #0366d6;
+    color: #0366d6;
+    font-family:monospace;
 }
 
 code {
@@ -11,4 +13,19 @@ code {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+
+.bg-image {
+    background-image: url("./Images/SpaceBackground.jpg");
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: 2px solid black;
+    color: white;
+    font-family: monospace;
+}
+
+.mainContainer{
+    height:1024px;
 }

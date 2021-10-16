@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Profile.css';
 
 export class Profile extends Component {
     static displayName = Profile.name;
@@ -58,6 +59,7 @@ export class Profile extends Component {
         if (response.status === 200) {
 
             console.log("Ok submit nickname");
+            this.FetchUserData();
         }
         else {
             console.log("failed to submit username")
@@ -91,9 +93,23 @@ export class Profile extends Component {
     }
 
     GetProfile(nickname, level, currency) {
-        return (<div><p> You have a nickname: {nickname} </p>
-                <p> level: { level } </p>
-                <p> currency: { currency } </p> </div>)
+        return (<div id="profileContainer">
+            <div id="textContainer">
+                <h4 > Nickname:</h4>              
+                <h4 > Level:</h4>                           
+                <h4 > Currency:</h4>              
+            </div>
+            <div id="varContainer">
+                <h4 > {nickname}</h4> 
+                <h4 > {level}</h4> 
+                <h4 > {currency}</h4> 
+            </div>
+            <div id="buttonContainer">
+                <button class="btn btn-outline-success">Change Nickname</button>
+                <button class="btn btn-outline-danger">Change Password</button>
+                <button class="btn btn-outline-info">Check Purchase History</button>
+            </div>
+        </div>)
     }
 
     render() {

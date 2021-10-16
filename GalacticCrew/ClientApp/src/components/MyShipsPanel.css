@@ -1,0 +1,16 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+.rowTable {
+    background-color: #110f13a8;
+    color: #a3a3a3bf !important;
+    font-family: monospace !important;
+}
+.rowTable:hover {
+    background-color: #501273e8 !important;
+    cursor: pointer;
+}
+.headerTable {
+    background-color: #8b000096;
+    color: white;
+    font-family: monospace !important;
+}

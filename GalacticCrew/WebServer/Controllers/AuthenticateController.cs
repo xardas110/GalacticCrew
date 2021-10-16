@@ -1,5 +1,6 @@
 ﻿using GalacticCrew.WebServer.Models;
 using GalacticCrew.WebServer.Services.Methods;
+using GalacticCrew.WebServer.Services.MySQL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,11 +18,13 @@ namespace GalacticCrew.WebServer.Controllers
     {
         public IConfiguration _config { get; }
         private readonly SecurityService _securityService;
+        private QuerySQL _mysql;
 
-        public AuthenticateController(IConfiguration Configuration, SecurityService securityService)
+        public AuthenticateController(IConfiguration Configuration, SecurityService securityService, QuerySQL mysql)
         {
             _config = Configuration;
             _securityService = securityService;
+            _mysql = mysql;
         }
 
         [HttpPost("Login")]
@@ -61,6 +64,9 @@ namespace GalacticCrew.WebServer.Controllers
                 var tokenString = Request.Cookies["GalacticCrew"];
                 uIDN =_securityService.VerifyAndGetClaims(tokenString);
 
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
                 if (_securityService.CreatePlayerByNickname(userName.userName, uIDN.UserID))
                     return Ok();
                 return NotFound();
@@ -69,6 +75,31 @@ namespace GalacticCrew.WebServer.Controllers
             {
                 Console.WriteLine(e.ToString());
                 return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet("OnLogin")]
+        public IActionResult OnLogin()
+        {
+            try
+            { 
+                string token = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(token);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                PlayerOnLogInInfo profile = _mysql.GetPlayerOnLogInInfo(uIDN.UserID);
+
+                if (profile == null)
+                    return NotFound("Profile is not found by uID");
+
+                return Ok(profile);
+            }
+            catch(Exception e)
+            {                
+                Console.WriteLine(e.ToString());
+                return UnprocessableEntity(e.ToString());
             }
         }
 

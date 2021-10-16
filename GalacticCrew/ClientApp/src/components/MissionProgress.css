@@ -1,0 +1,31 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+
+#inFlightImageContainer {
+    padding-top:5%;
+    width:45%;
+    margin: 0 auto;
+}
+.missionProgressTitle{
+    padding-top:10%;
+    text-align:center;
+}
+#progressBarContainer{
+    text-align:center;
+    padding-top:10%;
+    padding-left:5%;
+    padding-right:5%;
+}
+.missionStatusContent {
+}
+#completeMissionButton {
+    padding-top:5%;
+    width:15%;
+    margin: 0 auto;
+}
+.missionProgressMain {
+    align-self: center;
+    margin: auto;
+    background-color:black;
+    height:100%;
+}

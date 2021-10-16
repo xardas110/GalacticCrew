@@ -1,0 +1,86 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+.shipsPanel {
+    margin-left: 2%;
+    margin-top: 5%;
+    float: left;
+    width: 45%;
+    height:440px;
+    overflow:auto;
+}
+
+.shipInformationPanel {
+    margin-right: 2%;
+    margin-top: 5%;
+    float: right;
+    width: 45%;
+    height: 440px;
+}
+#noMissionInProgressText{
+
+}
+.missionStatusContent {
+    margin-top: 7%;
+    width: 100%;
+    height: 100%;
+    border: thick solid;
+    border-color: gray;
+}
+.btn-primary {
+    background-color: #ff0028 !important;
+}
+.missionProbability {
+    display:flex;
+    padding-top:2%;
+    width: 100%;
+    height: 20%;
+    justify-content:center;
+}
+#renderWithMissionContainer{
+    width:100%;
+    height:100%;
+}
+.missionButtons {
+    width:100%;
+    display:flex;
+    align-items:stretch;
+    flex-direction:column;
+    padding-top:2%;
+}
+.missionStatusHeader {
+    width: 100%;
+    text-align: center;
+    border: thick solid;
+    border-color: #fe9ca459;
+    background-color: #460000d4;
+    font-family: monospace;
+}
+.missionStatusTable{
+    width:100%;
+}
+
+.d-grid gap-2{
+    flex-direction:column;
+}
+#noMissionContainer {
+    background-image: url("../Images/Station.png");
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: 2px solid black;
+    color: white;
+    text-align: center;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+}
+
+.tableBackgroundImg {
+    background-image: url("../Images/stationImagefix.jpg");
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-clip: padding-box;
+}

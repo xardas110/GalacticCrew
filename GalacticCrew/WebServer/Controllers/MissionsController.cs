@@ -7,96 +7,128 @@ using System.Threading.Tasks;
 using GalacticCrew.WebServer.Models;
 using GalacticCrew.WebServer.Services.MySQL;
 using Microsoft.AspNetCore.Authorization;
+using GalacticCrew.WebServer.Services.Methods;
 
 namespace GalacticCrew.WebServer.Controllers
 {
+    [ApiController]
+    [Route("Api")]
     public class MissionsController : Controller
     {
-        // GET: MissionsController
-        public ActionResult Index()
+
+        private readonly SecurityService _securityService;
+        private QuerySQL _mysql;
+
+        public MissionsController(SecurityService securityService, QuerySQL mysql)
         {
-            Missions mission = new Missions();
-            mission.MissionDesc = "random stuff";
-            mission.MissionDistance = 3000;
-            mission.MissionReward = 2000;
-            mission.MissionTitle = "Mission impossible";
-            return View("Webserver/views/Missions/Missionpanel.cshtml", mission);
+            _securityService = securityService;
+            _mysql = mysql;
         }
 
-        public List<Missions> AllMissions()
+        [Route("AvailableMissions")]
+        [HttpGet]
+        public IActionResult GetAvailableMissions()
         {
-            QuerySQL query = new QuerySQL();
-            return query.GetMissionTable();
+            List<Mission> missionList = new List<Mission>();
+            int iStatus = _mysql.GetAvailableMissions(missionList);
+
+            if (iStatus > 0)
+                return Ok(missionList);
+            else if (iStatus == 0)
+                return NotFound("No missions found");
+          
+            return UnprocessableEntity("Database exception error");
         }
 
-        // GET: MissionsController/Details/5
-        public ActionResult Details(int id)
-        {
-            
-            return View();
-        }
-
-        // GET: MissionsController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: MissionsController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [Route("MissionInformation/{missionID}")]
+        [HttpGet]
+        public IActionResult GetMissionInformation(int missionID)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string token = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(token);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                MissionInformation missionInformation = new MissionInformation();
+                int iStatus = _mysql.GetMissionByMissionID(missionID, missionInformation);
+
+                Console.WriteLine("Running mission information");
+                Console.WriteLine(missionID);
+                Console.WriteLine(missionInformation);
+                if (iStatus == 1)
+                    return Ok(missionInformation);
+                else if (iStatus == 0)
+                    return NotFound("Mission not found by Mission ID");
+
+                return UnprocessableEntity("Database exception error");
             }
-            catch
+            catch(Exception e)
             {
-                return View();
-            }
+                Console.WriteLine(e.ToString());
+                return UnprocessableEntity("Something went wrong");
+            }          
         }
 
-        // GET: MissionsController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
 
-        // POST: MissionsController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: MissionsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: MissionsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Route("AcceptMission/{missionID}")]
+        [HttpGet]
+        public IActionResult AcceptMission(int missionID)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string token = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(token);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                int iStatus = _mysql.AcceptMissionByMissionID(uIDN.UserID, missionID);
+                Console.WriteLine("Status from sql query: %i" + iStatus);
+                if (iStatus == 2)
+                    return Ok("Mission Accepted");
+                else if (iStatus == 1)
+                    return NoContent();
+
+                return UnprocessableEntity("Database exception error");
             }
-            catch
+            catch (Exception e)
             {
-                return View();
+                Console.WriteLine(e.ToString());
+                return UnprocessableEntity("Something went wrong");
             }
         }
+
+        [Route("MissionOngoing")]
+        [HttpGet]
+        public IActionResult MissionOngoing()
+        {
+            try
+            {
+                string token = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(token);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                MissionOnGoing missionOnGoing = new MissionOnGoing();
+                int iStatus = _mysql.GetOngoingMissionByUserID(uIDN.UserID, missionOnGoing);
+
+                if (iStatus == 1)
+                    return Ok(missionOnGoing);
+                else if (iStatus == 0)
+                    return NoContent();
+
+                return UnprocessableEntity("Database exception error");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return UnprocessableEntity("Something went wrong");
+            }
+        }
+
     }
 }

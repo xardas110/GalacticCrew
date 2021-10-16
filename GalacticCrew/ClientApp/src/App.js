@@ -8,9 +8,13 @@ import { Profile } from './components/Profile';
 import { Login } from './components/Login';
 import { Container } from 'reactstrap';
 import './custom.css'
-import { NavMenu }  from './components/NavMenu';
+import { NavMenu } from './components/NavMenu';
+import { MissionStatus } from './components/MissionStatus';
 import { BrowserRouter } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Market } from './components/Market';
+import { MyShips } from './components/MyShips';
+
 
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
@@ -23,65 +27,72 @@ export default class App extends Component {
 
         this.state =
         {
-            LoggedIn: false,
-            UserName: null,
-            UserId: null,
+            loggedIn: false,
+            user: {}
         }
 
         this.FetchUserData = this.FetchUserData.bind(this);
-
+        this.UpdateUserState = this.UpdateUserState.bind(this);
+        this.UpdatePlayerCurrency = this.UpdatePlayerCurrency.bind(this);
         console.log("App logger: ");
         console.log(this.props);
 
     }
-    componentDidMount() {
-        console.log("component mount");
-        this.FetchUserData();
+
+    UpdateUserState(userState) {
+        this.setState({ user: userState });
     }
-    
-    render() {
-      //<Navbar data={{ loggedIn: this.state.LoggedIn }} />
-        return (
-                <BrowserRouter basename={baseUrl}>
-                    <NavMenu data={{ navMenu: this.state.navMenu, loggedIn: (bLogIn) => { this.setState({ loggedIn: bLogIn }) } }} /> 
-                <Container>                                                                        
-                    <Route exact path='/' component={() => <Home data={{ userName: this.state.UserName, loggedIn: this.state.LoggedIn }} />} />
-                    <Route path='/MissionPanel' component={MissionPanel} />
-                    <Route path='/Register' component={Register} />
-                    <Route path='/Login' component={() => <Login data={{ navMenu: this.state.navMenu, loggedIn: (bLogIn) => { this.setState({ loggedIn: bLogIn }) } }} />} />
-                    <Route path='/Profile' component={Profile} />
-                    </Container>
-                </BrowserRouter>
-            
-        );
-        
+
+    UpdatePlayerCurrency(newCurrency) {
+       
+        var updatedData = this.state.user;
+        updatedData.currency = newCurrency;
+        this.setState({ user: updatedData });
+    }
+
+    componentDidMount() {
+        this.FetchUserData();
     }
 
     async FetchUserData() {
-       
-        const response = await fetch('Api/User',
+
+        const response = await fetch('Api/OnLogin',
             {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: "include",
             });
 
+        console.log(response.status);
+
         if (response.status == 200) {
             const data = await response.json();
+            console.log("App fetch data");
+            console.log(data);
+            data.loggedIn = true;
+
             this.setState({
-                LoggedIn: true,
-                UserName: data.userName
+                user: data
             });
-            localStorage.setItem("loggedIn", true);
-            localStorage.setItem("userName", data.userName);
-        }
-        else {
-            this.setState({
-                LoggedIn: false
-            });
-            console.log("app else statement running inside fetch");
-            localStorage.setItem("loggedIn", false);
-            localStorage.setItem("userName", null);
         }
     }
 
+    render() {
+        console.log("rerender app");
+        return (<div class="bg-image">                           
+            <BrowserRouter basename={baseUrl}>
+                <NavMenu setUser={this.UpdateUserState} user={this.state.user}/> 
+                <Container className="mainContainer">
+                    <Route exact path='/' component={Home} />
+                    <Route path='/Register' component={() => <Register />} />
+                    <Route path='/Login' component={() => <Login setUser={this.UpdateUserState} loggedIn={this.state.user.loggedIn} />} />
+                    <Route path='/Profile' component={() => <Profile />} />
+                    <Route path='/Missionpanel' component={() => <MissionPanel />} />
+                    <Route path='/MissionStatus' component={() => <MissionStatus />} />
+                    <Route path='/Market' component={() => <Market />} />
+                    <Route path='/MyShips' component={() => <MyShips setPlayerCurrency={this.UpdatePlayerCurrency} playerCurrency={this.state.user.currency} />} />
+                </Container>
+                </BrowserRouter>     
+            </div>
+        );     
+    }
 }

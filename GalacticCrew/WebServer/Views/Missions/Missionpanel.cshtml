@@ -1,4 +1,4 @@
-﻿@model GalacticCrew.WebServer.Models.Missions
+﻿@model GalacticCrew.WebServer.Models.Mission
 
 @{
     ViewData["Title"] = "Missionpanel";
@@ -15,12 +15,6 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.MissionTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MissionDesc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MissionDesc)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.MissionReward)

@@ -1,0 +1,17 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+#marketContainer {
+    margin-top: 7%;
+    height: 1200px;
+    border: thick solid;
+    border-color: gray;
+    background-color: #15091fe6;
+}
+
+#marketHeader{
+    text-align:center;
+}
+
+#shipTable {
+    margin-top:5%;
+}

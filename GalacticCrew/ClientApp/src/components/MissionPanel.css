@@ -1,0 +1,74 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+.custom-row-class {
+    color: #c8ddf2ba;
+    border: 4px;
+}
+
+.custom-row-class:hover {
+    background-color: #50127380;
+    cursor:pointer;
+}
+
+#tabelLabel {
+    color: #aeb8ff;
+    text-align: center;
+}
+.id-custom-cell {
+    color: #7f90fa;
+}
+.table-bordered th{
+    padding: 0px !important;
+    border:0px !important;
+    border-color:red !important;
+}
+.table-bordered td {
+    padding: 0px !important;
+    border: 0px !important;
+}
+#missionHeader {
+}
+#selectedMissionContainer {
+    padding-top: 5%;
+    text-align: center;
+}
+.d-grid {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+::-webkit-scrollbar {
+    display: none;
+    
+}
+#missionAcceptedContainer{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+}
+.react-bootstrap-table {
+    height: 80% !important;
+    display: block !important;
+}
+.missionBackgroundImage {
+    background-image: url("../Images/stationImagefix.jpg");
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-clip: padding-box;
+}
+#missionTableContainer {
+    margin-top: 5%;
+    height: 440px;
+    overflow: auto;
+}
+.MissionPanel {
+    margin-top: 7%;
+    background-color: #0f081bba;
+    height: 100%;
+    border: 8px solid gray;
+    overflow-wrap: break-word;
+    overflow: auto;
+}
