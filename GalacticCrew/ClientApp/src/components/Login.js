@@ -14,7 +14,8 @@ export class Login extends Component
             userName : "",
             password: "",
             loggedIn: this.props.loggedIn,
-            goto:false
+            goto: false,
+            bRedirectProfile: false
         }
 
         this.OnPasswordChange = this.OnPasswordChange.bind(this);
@@ -40,6 +41,7 @@ export class Login extends Component
             const data = await response.json();
             return data;
         } else {
+            this.setState({ bRedirectProfile: true });
             return null;
         }
     }
@@ -120,6 +122,9 @@ export class Login extends Component
     render() {
 
         if (this.state.loggedIn)
+            return (<Redirect to="/profile" />);
+
+        if (this.state.bRedirectProfile)
             return (<Redirect to="/profile" />);
 
         let content;

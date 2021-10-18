@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './Profile.css';
 
-export class Profile extends Component {
-    static displayName = Profile.name;
+export class ChangeNickname extends Component {
+    static displayName = ChangeNickname.name;
 
     constructor(props) {
         super(props)

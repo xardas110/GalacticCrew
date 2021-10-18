@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { ChangeNickname } from "./ChangeNickname"
 import './Profile.css';
 
 const status = {
     null: 0,
     changeNickname: 1,
     nicknameForm: 2,
-
+    profile: 3,
+    loading: 4  
 }
 
 export class Profile extends Component {
@@ -18,9 +20,7 @@ export class Profile extends Component {
             nickName: "",
             currency: null,
             playerLevel: null,
-            hasNickname: false,
-            loading: true,
-            status: status.null
+            status: status.loading
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -43,15 +43,15 @@ export class Profile extends Component {
                 this.setState({
                     nickName: data.nickName,
                     playerLevel: data.playerLevel,
-                    currency:data.currency,
-                    hasNickname: true,
-                    loading: false
+                    currency: data.currency,
+                    status: status.profile
                 })
             }
 
         } else {
             console.log("profile fetch failed response");
             console.log(response.status);
+            this.setState({ status: status.nicknameForm });
         }
 
     }
@@ -136,11 +136,29 @@ export class Profile extends Component {
     render() {
 
         let content;
-        content = this.state.loading ?
-            <h5></h5> :
-            this.state.hasNickname ?
-                this.GetProfile(this.state.nickName, this.state.playerLevel, this.state.currency) :
-                this.GetNicknameForm();
+
+        switch (this.state.status) {
+            case status.profile:
+                {
+                    content = this.GetProfile(this.state.nickName, this.state.playerLevel, this.state.currency);
+                }
+                break;
+            case status.changeNickname:
+                {
+                    content = <ChangeNickname />;
+                }
+                break;
+            case status.nicknameForm:
+                {
+                    content = this.GetNicknameForm();
+                }
+                break;
+            case status.loading:
+                {
+                    content = <h5>loading...</h5>
+                }
+                break;
+        }
 
         return (<div id="profileContainer">{content}</div>);
     }
