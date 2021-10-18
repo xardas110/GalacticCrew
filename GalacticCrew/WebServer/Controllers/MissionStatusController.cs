@@ -136,10 +136,13 @@ namespace GalacticCrew.WebServer.Controllers
 
                 switch (iStatus)
                 {
-                    case 5: return Ok();
-                    case 4: return NoContent();
-                    case 3: return Unauthorized("ShipID doesn't belong to player");
-                    default: return UnprocessableEntity("Database exception error");
+                    case  1: return Ok("Mission Started!");
+                    case -2: return BadRequest("You don't own that ship");
+                    case -3: return BadRequest("Something went wrong");
+                    case -4: return BadRequest("You have not accepted that mission!");
+                    case -5: return BadRequest("You have already started that mission");
+                    case -6: return BadRequest("Something went wrong");
+                    default: return UnprocessableEntity("Something went wrong");
                 }
             }
             catch (Exception e)

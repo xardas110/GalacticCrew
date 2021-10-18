@@ -27,7 +27,7 @@ namespace GalacticCrew.WebServer.Controllers
 
         [HttpGet]
         [Route("Market")]
-        public IActionResult GetOwnedShips()
+        public IActionResult GetMarket()
         {
             try
             {
@@ -68,12 +68,12 @@ namespace GalacticCrew.WebServer.Controllers
 
                 int iStatus = _mysql.BuyShip(uIDN.UserID, shipID);
 
-                if (iStatus == 2)
-                    return Ok();
-                else if (iStatus == 1)
-                    return NoContent();
-
-                return UnprocessableEntity("Database exception error");
+                switch(iStatus)
+                {
+                    case 1: return Ok("Success!");
+                    default: return UnprocessableEntity("Database exception error");
+                }
+              
             }
             catch (Exception e)
             {

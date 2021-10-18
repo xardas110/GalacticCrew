@@ -111,8 +111,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                         profile.RankType = data[2].ToString();
                         profile.PlayerLevel = (int)data[3];
                         profile.Currency = (int)data[4];
-                        profile.RankID = (int)data[5];
-                       
+                        profile.RankID = (int)data[5];                       
                         profile.ShipName = data[6].ToString();
 
                         connection.Close();
@@ -177,8 +176,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
             int iSuccess = -1;
             using (var connection = new MySqlConnection(ConnectionString))
             {
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                
+                MySqlCommand cmd = new MySqlCommand(query, connection);               
                 cmd.Parameters.Add("@Username", MySqlDbType.VarChar, 20).Value = user.UserName;
 
                 try
@@ -587,10 +585,17 @@ namespace GalacticCrew.WebServer.Services.MySQL
         /// </summary>
         /// <param name="userID">From token</param>
         /// <param name="shipID">From client database have safety</param>
-        /// <returns>5 if success, 4 if no accepted mission or mission already started, 3 if player tries to cheat, -1 exception error</returns>
+        /// <returns>
+        ///  1 if success
+        /// -2 if user doesn't own the ship
+        /// -3 if MYSQL update statement failed 1
+        /// -4 if player have not accepted a mission
+        /// -5 if player already have started the mission
+        /// -6 if MYSQL update statement failed 2
+        /// </returns>
         public int StartMissionByUserID(int userID, int shipID)
         {
-            var query = "call sp_StartMissionByUserID(@UserID, @ShipID)";
+            var query = "select f_StartMissionByUserID(@UserID, @ShipID)";
             int iSuccess = -1;
 
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
@@ -602,7 +607,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                 try
                 {
                     connection.Open();
-                    iSuccess = cmd.ExecuteNonQuery();
+                    iSuccess = Convert.ToInt32(cmd.ExecuteScalar());
                 }
                 catch (Exception e)
                 {
@@ -631,11 +636,8 @@ namespace GalacticCrew.WebServer.Services.MySQL
                 try
                 {
                     connection.Open();
-                    MySqlDataReader data = cmd.ExecuteReader();
-                    while (data.Read())
-                    {
-                        iSuccess = (int)Convert.ToInt64(data[0]);
-                    }
+                    iSuccess = Convert.ToInt32(cmd.ExecuteScalar());
+
                 }
                 catch (Exception e)
                 {
@@ -695,10 +697,10 @@ namespace GalacticCrew.WebServer.Services.MySQL
         /// </summary>
         /// <param name="userID"></param>
         /// <param name="shipID"></param>
-        /// <returns>2 if success, 1 if player has ship or no funds, -1 exception error</returns>
+        /// <returns>-1 exception error</returns>
         public int BuyShip(int userID, int shipID)
         {
-            var query = "call sp_BuyShipByShipID(@UserID, @ShipID)";
+            var query = "call sp_BuyShip(@UserID, @ShipID)";
             int iSuccess = -1;
 
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
@@ -710,7 +712,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                 try
                 {
                     connection.Open();
-                    iSuccess = cmd.ExecuteNonQuery();
+                    iSuccess = Convert.ToInt32(cmd.ExecuteScalar());
                 }
                 catch (Exception e)
                 {

@@ -72,3 +72,12 @@
     overflow-wrap: break-word;
     overflow: auto;
 }
+
+#alreadInMissionContainer {
+    text-align:center;
+    height:100%;
+    display:flex;
+    justify-content:space-around;
+    flex-direction:column;
+
+}

@@ -88,7 +88,7 @@ export default class App extends Component {
                     <Route path='/Profile' component={() => <Profile />} />
                     <Route path='/Missionpanel' component={() => <MissionPanel />} />
                     <Route path='/MissionStatus' component={() => <MissionStatus />} />
-                    <Route path='/Market' component={() => <Market />} />
+                    <Route path='/Market' component={() => <Market setPlayerCurrency={this.UpdatePlayerCurrency} playerCurrency={this.state.user.currency} />} />
                     <Route path='/MyShips' component={() => <MyShips setPlayerCurrency={this.UpdatePlayerCurrency} playerCurrency={this.state.user.currency} />} />
                 </Container>
                 </BrowserRouter>     

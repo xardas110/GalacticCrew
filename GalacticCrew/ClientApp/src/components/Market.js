@@ -23,6 +23,7 @@ export class Market extends Component {
             selectedRow: {},
             hasShipID: false,
             shipID: -1,
+            playerCurrency: -1,
             marketStatus: status.shipBought
         }
 
@@ -43,7 +44,7 @@ export class Market extends Component {
             case 200:
                 {
                     const data = await response.json();
-                    this.setState({ shipData:data, marketStatus:status.shipBought });
+                    this.setState({ shipData: data, marketStatus: status.shipBought });
                 }
                 break;
             default:
@@ -66,7 +67,7 @@ export class Market extends Component {
         switch (response.status) {
             case 200:
                 {
-                    this.fetchMarket();
+                    this.fetchMarket();                 
                 }
                 break;
             default:
@@ -78,6 +79,7 @@ export class Market extends Component {
     }
 
     componentDidMount() {
+        this.setState({ playerCurrency: this.props.playerCurrency });
         this.fetchMarket();
     }
 
@@ -88,8 +90,11 @@ export class Market extends Component {
     }
 
     OnBuyShip() {
-        if (this.state.hasShipID)
+        if (this.state.hasShipID) {
             this.fetchBuyShip(this.state.shipID);
+            var newCurrency = this.props.playerCurrency - this.state.selectedRow.shipCost;
+            this.setState({ playerCurrency: newCurrency });
+        }
     }
         
     render() {
@@ -104,6 +109,7 @@ export class Market extends Component {
                 <ShipInformationPanel hasShipID={this.state.hasShipID} shipID={this.state.shipID} />
             </div>
             <div className="marketButton">
+                <h1> Your money: {this.state.playerCurrency} </h1>
                 <Button variant="primary" size="lg" onClick={this.OnBuyShip} disabled={!this.state.hasShipID}>
                     Buy Ship
                 </Button>

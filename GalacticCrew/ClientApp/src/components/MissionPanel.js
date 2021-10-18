@@ -7,7 +7,12 @@ import { MissionInformation } from "./MissionInformation"
 import './MissionPanel.css';
 
 const status = {
-    toMissionStatus: 1
+    toMissionStatus: 1,
+    alreadyInAMission: 2,
+    missionAccepted: 3,
+    loading: 4,
+    mainPage: 5,
+    missionInformation : 6
 }
 
 export class MissionPanel extends Component {
@@ -55,10 +60,7 @@ export class MissionPanel extends Component {
           isSelected: false,
           selectedRow: {},
           showMissionInformation: false,
-          loading: true,
-          missionAccepted: false,
-          alreadyInAMission: false,
-          status:status
+          status: status.mainPage
       };
 
       this.OnRowSelect = this.OnRowSelect.bind(this);
@@ -69,7 +71,7 @@ export class MissionPanel extends Component {
   }
 
     BackFromMissionInformation() {
-        this.setState({ showMissionInformation: false });
+        this.setState({ status: status.mainPage });
     }
 
   componentDidMount() {
@@ -89,7 +91,7 @@ export class MissionPanel extends Component {
 
     OnClickInformation(e) {
         console.log("Onclick information pressed");
-        this.setState({ showMissionInformation: true });
+        this.setState({ status: status.missionInformation });
     }
 
     async fetchAcceptMission(missionID) {
@@ -102,11 +104,11 @@ export class MissionPanel extends Component {
         console.log(response.status);
 
         if (response.status === 200) {
-            this.setState({ missionAccepted: true })
+            this.setState({ status: status.missionAccepted })
         }
 
         if (response.status === 204 || response.status === 422) {
-            this.setState({ alreadyInAMission: true });
+            this.setState({ status: status.alreadyInAMission });
         }
     }
 
@@ -150,25 +152,45 @@ export class MissionPanel extends Component {
             return (<Redirect to="/MissionStatus" />); 
         }
 
-        if (this.state.alreadyInAMission)
-            return (<Container><h1> You already have a mission!</h1>
-                <h1>Go to mission status for further information</h1></Container>);
+        let showPage;
 
-        let contents = this.state.loading
-        ? <p><em>Loading...</em></p>
-        : MissionPanel.renderMissionTable(this.state.missions, this.state.columns, this.state.selectRow);
-
-        let selectedMission = this.state.isSelected ? <h4>Selected Mission: {this.state.selectedRow.missionTitle}</h4>:<p></p>;
-
-        let showPage = this.state.showMissionInformation ?
-            <MissionInformation selectedRow={this.state.selectedRow} AcceptMission={this.OnAcceptMission} BackToMissionPanel={this.BackFromMissionInformation} />
-            : this.renderMissionPanel(contents, selectedMission, this.state.isSelected);
-
-        if (this.state.missionAccepted)
-            showPage = (<div id="missionAcceptedContainer">
-                <h1 id="tabelLabel">Mission accepted</h1>
-                <button className="btn btn-secondary btn-lg" size="lg" onClick={this.OnClickToMissionStatus}>Go: Mission Status</button>
-            </div>);
+        switch (this.state.status) {
+            case status.alreadyInAMission:
+                {
+                    showPage = (<Container id="alreadInMissionContainer">
+                        <div id="alreadyAcceptedTextContainer">
+                            <h1> You already have a mission!</h1>
+                            <h1>Go to mission status for further information</h1>
+                        </div>
+                        <div id="alreadyAcceptedButtonContainer" className="d-grid gap-2">
+                            <Button variant="primary" size="lg" onClick={e => { this.setState({ status: status.toMissionStatus })}}>
+                                Go: Mission Status
+                            </Button>
+                        </div>
+                    </Container>);
+                }
+                break;
+            case status.mainPage:
+                {
+                    let selectedMission = this.state.isSelected ? <h4>Selected Mission: {this.state.selectedRow.missionTitle}</h4> : <p></p>;
+                    let contents = MissionPanel.renderMissionTable(this.state.missions, this.state.columns, this.state.selectRow);
+                    showPage = this.renderMissionPanel(contents, selectedMission, this.state.isSelected)
+                }
+                break;
+            case status.missionInformation:
+                {
+                    showPage = <MissionInformation selectedRow={this.state.selectedRow} AcceptMission={this.OnAcceptMission} BackToMissionPanel={this.BackFromMissionInformation} />;
+                }
+                break;
+            case status.missionAccepted:
+                {
+                    showPage = (<div id="missionAcceptedContainer">
+                        <h1 id="tabelLabel">Mission accepted</h1>
+                        <button className="btn btn-secondary btn-lg" size="lg" onClick={this.OnClickToMissionStatus}>Go: Mission Status</button>
+                    </div>);
+                }
+                break;
+        }
 
         return (<div className="missionBackgroundImage"><div className="MissionPanel">{showPage}</div></div>);
   }

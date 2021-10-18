@@ -87,12 +87,12 @@ namespace GalacticCrew.WebServer.Controllers
 
                 int iStatus = _mysql.AcceptMissionByMissionID(uIDN.UserID, missionID);
                 Console.WriteLine("Status from sql query: %i" + iStatus);
-                if (iStatus == 2)
-                    return Ok("Mission Accepted");
-                else if (iStatus == 1)
-                    return NoContent();
 
-                return UnprocessableEntity("Database exception error");
+                switch(iStatus)
+                {
+                    case 2: return Ok("Mission Accepted");
+                    default: return UnprocessableEntity("Database exception error");
+                }
             }
             catch (Exception e)
             {
