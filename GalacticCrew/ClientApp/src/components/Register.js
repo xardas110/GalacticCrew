@@ -52,7 +52,7 @@ export class Register extends Component
             setTimeout(e => { return(<Redirect to="/Login"/>) }, 1000)
         }
 
-        return (
+        return (<div id="profileContainer">
             <form class="form-horizontal" onSubmit={this.onSubmit}>
             <fieldset>
                 <div id="legend">
@@ -85,12 +85,12 @@ export class Register extends Component
                 </div>
                 <div class="control-group">
                         <div class="controls">
-                            <button class="btn btn-success" type="submit" /*disabled={!this.ValidateForm()}*/>Register</button>
+                            <button id ="logInButton" class="btn btn-success" type="submit" /*disabled={!this.ValidateForm()}*/>Register</button>
                         </div>
                         {this.state.bRegister?(<h1>Success! Redirecting in 2 sec...</h1>):(<h1></h1>)}
                 </div>
             </fieldset>
-            </form>)
+            </form></div>)
     }
     OnUserNameChange(e) {
 

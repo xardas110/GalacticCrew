@@ -757,6 +757,67 @@ namespace GalacticCrew.WebServer.Services.MySQL
             return iSuccess;
         }
 
+        public int GetPlayerCurrency(int userID, PlayerCurrency playerCurrency)
+        {
+            var query = "call sp_GetPlayerCurrency(@UserID)";
+            int iSuccess = -1;
+
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.Add("@UserID", MySqlDbType.Int32, 11).Value = userID;
+
+                try
+                {
+                    connection.Open();
+                    playerCurrency.currency = Convert.ToDecimal(cmd.ExecuteScalar());
+                    iSuccess = 1;
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    iSuccess = -1;
+                }
+                connection.Close();
+            }
+            return iSuccess;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="nickName"></param>
+        /// <returns> 1 if success, 0 if no changes,-1 SQL error</returns>
+        public int ChangeNickname(int userID, string nickName)
+        {
+            var query = "call sp_ChangePlayerNickname(@UserID, @NickName)";
+            int iSuccess = -1;
+
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.Add("@UserID", MySqlDbType.Int32, 11).Value = userID;
+                cmd.Parameters.Add("@NickName", MySqlDbType.VarChar, 20).Value = nickName;
+
+                try
+                {
+                    connection.Open();                
+                    iSuccess = cmd.ExecuteNonQuery();
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    iSuccess = -1;
+                }
+                connection.Close();
+            }
+            return iSuccess;
+        }
+
+
     }  
 }
 

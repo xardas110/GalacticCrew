@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import BootstrapTable from 'react-bootstrap-table-next';
 import { Button, Container } from 'react-bootstrap';
-import { MissionInformation } from "./MissionInformation"
 import './MyShips.css';
 import { MyShipsPanel } from './MyShipsPanel';
 import { ShipInformationPanel } from './ShipInformationPanel';
+import { Market } from './Market';
 
 const status = {
     Null: "Null",
@@ -36,11 +34,16 @@ export class MyShips extends Component {
         console.log(this.props);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         console.log("Myships componentDidMount");
         console.log(this.props);
-
         this.setState({ playerCurrency: this.props.playerCurrency });
+
+        let currency = await Market.FetchPlayerCurrency();
+
+        if (this.state.playerCurrency != currency) {
+            this.setState({ playerCurrency: currency });
+        }      
     }
 
     rowCallBackFunc(row, isSelected) {

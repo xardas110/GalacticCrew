@@ -1,0 +1,17 @@
+﻿﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+#logInButton {
+    background-color: #00000000 !important;
+    border-color:orange !important;
+    border:thick solid;
+   
+    color:orange !important;
+    
+}
+.controls{
+    padding-top:2%;
+}
+#logInButton:hover {
+    background-color: orange !important;
+    color: white !important;
+}

@@ -36,16 +36,10 @@ code {
 /* For Tablets */
 @media screen and (min-height: 540px) and (max-height: 780px) {
     .mainContainer {
-        height: 512px;
+        height: 680px;
     }
 }
 
-/* For 1080p */
-@media screen and (min-height: 780px) and (max-height: 1080px) {
-    .mainContainer {
-        height: 800px;
-    }
-}
 
 /* For 1080p */
 @media screen and (min-width: 1280px) and (max-width: 1920px) {
@@ -54,6 +48,13 @@ code {
     }
 }
 
+
+/* For 1080p */
+@media screen and (min-height: 780px) and (max-height: 1080px) {
+    .mainContainer {
+        height: 800px;
+    }
+}
 
 /* For 2160p */
 @media screen and (min-height: 1080px) and (max-height: 2160px) {

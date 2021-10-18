@@ -161,5 +161,34 @@ namespace GalacticCrew.WebServer.Controllers
             return Redirect("/profile");
         }
 
+        [HttpPost("ChangeNickname")]
+        public IActionResult ChangeNickname(string newNick)
+        {
+            try
+            {
+                UserIDName uIDN = new UserIDName();
+                var tokenString = Request.Cookies["GalacticCrew"];
+                uIDN = _securityService.VerifyAndGetClaims(tokenString);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                int iStatus = _mysql.ChangeNickname(uIDN.UserID, newNick);
+
+                switch (iStatus)
+                {
+                    case 1:     return Ok("Nickname changed");
+                    case 0:     return BadRequest("Failed to change Nickname");
+                    default:    return UnprocessableEntity("Something went wrong");
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return BadRequest(e.ToString());
+            }
+        }
+
     }
 }

@@ -81,5 +81,34 @@ namespace GalacticCrew.WebServer.Controllers
                 return UnprocessableEntity("Something went wrong");
             }
         }
+
+        [HttpGet]
+        [Route("PlayerCurrency")]
+        public IActionResult GetPlayerCurrency()
+        {
+            try
+            {
+                string token = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(token);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                PlayerCurrency playerCurrency = new PlayerCurrency();
+                int iStatus = _mysql.GetPlayerCurrency(uIDN.UserID, playerCurrency);
+
+                switch (iStatus)
+                {
+                    case 1: return Ok(playerCurrency);
+                    default: return UnprocessableEntity("Database exception error");
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return UnprocessableEntity("Something went wrong");
+            }
+        }
     }
 }

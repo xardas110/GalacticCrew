@@ -11,7 +11,7 @@ export class Home extends Component {
     render() {
         //let content = this.state.LoggedIn ? this.welcome(this.state.UserName) : "You are not logged in"
     return (
-      <div>
+      <div id="profileContainer">
             <h1>Hello battlestar crew </h1>         
         <p>Todo List:</p>
         <ul>

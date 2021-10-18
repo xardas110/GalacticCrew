@@ -96,7 +96,7 @@ export class MissionProgress extends Component {
 
         if (delta >= 1.0) {
             clearInterval(this.state.timer);
-            this.setState({ missionStatus: missionStatus.Finished });
+            this.setState({ missionStatus: missionStatus.Finished, timeLeft:(0) + "Minutes" });
         }
     }
 
@@ -125,7 +125,7 @@ export class MissionProgress extends Component {
                 <Button variant="primary" size="lg" onClick={this.OnCompleteMission} hidden={!(this.state.missionStatus == missionStatus.Finished)}>
                     Complete Mission
                 </Button>
-                <Button variant="primary" size="lg" onClick={this.props.cancelMissionCallback}>
+                <Button variant="primary" size="lg" onClick={this.props.cancelMissionCallback} hidden={this.state.missionStatus == missionStatus.Finished}>
                     Cancel Mission
                 </Button>
             </div>

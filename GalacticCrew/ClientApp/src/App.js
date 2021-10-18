@@ -16,7 +16,6 @@ import { Market } from './components/Market';
 import { MyShips } from './components/MyShips';
 
 
-
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 
 export default class App extends Component {

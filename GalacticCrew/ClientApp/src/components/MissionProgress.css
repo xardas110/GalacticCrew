@@ -28,4 +28,5 @@
     margin: auto;
     background-color:black;
     height:100%;
+    overflow: auto;
 }

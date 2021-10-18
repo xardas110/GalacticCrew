@@ -32,6 +32,24 @@ export class Market extends Component {
         this.ShipInformation = this.ShipInformation.bind(this);
     }
 
+
+    static async FetchPlayerCurrency(outCurrency) {
+
+        const response = await fetch('Api/PlayerCurrency',
+            {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "include",
+            });
+
+        console.log(response.status);
+
+        if (response.status == 200) {
+            const data = await response.json();
+            return data.currency;
+        }
+        return -1;
+    }
+
     async fetchMarket() {
         const response = await fetch('Api/Market',
             {
@@ -85,9 +103,15 @@ export class Market extends Component {
         }
     }
 
-    componentDidMount() {
-        this.setState({ playerCurrency: this.props.playerCurrency });
-        this.fetchMarket();
+    async componentDidMount() {
+        await this.fetchMarket();
+        
+        let currency = await Market.FetchPlayerCurrency();
+        console.log("outcurrency from componentDidMount");
+        console.log(currency);
+        if (currency > -1) {
+            this.setState({ playerCurrency : currency });
+        }
     }
 
     OnRowSelect(row, isSelect) {

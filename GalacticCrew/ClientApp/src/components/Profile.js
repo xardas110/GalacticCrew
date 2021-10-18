@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import './Profile.css';
 
+const status = {
+    null: 0,
+    changeNickname: 1,
+    nicknameForm: 2,
+
+}
+
 export class Profile extends Component {
     static displayName = Profile.name;
 
@@ -12,7 +19,8 @@ export class Profile extends Component {
             currency: null,
             playerLevel: null,
             hasNickname: false,
-            loading: true
+            loading: true,
+            status: status.null
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -49,7 +57,6 @@ export class Profile extends Component {
     }
 
     async SubmitNickname() {
-
         const response = await fetch('Api/CreatePlayer',
             {
                 method: 'POST',
@@ -94,6 +101,18 @@ export class Profile extends Component {
         </form>)
     }
 
+    OnClickChangeNick() {
+        
+    }
+
+    OnClickChangePass() {
+
+    }
+
+    OnClickCheckPurchase() {
+
+    }
+
     GetProfile(nickname, level, currency) {
         return (<div id="profileContainerInner">
             <div id="textContainer">
@@ -107,9 +126,9 @@ export class Profile extends Component {
                 <h4 > {currency}</h4> 
             </div>
             <div id="buttonContainer">
-                <button class="btn btn-outline-success">Change Nickname</button>
-                <button class="btn btn-outline-danger">Change Password</button>
-                <button class="btn btn-outline-info">Check Purchase History</button>
+                <button class="btn btn-outline-success" onClick={this.OnClickChangeNick } >Change Nickname</button>
+                <button class="btn btn-outline-danger" onClick={this.OnClickChangePass} >Change Password</button>
+                <button class="btn btn-outline-info" onClick={this.OnClickCheckPurchase} >Check Purchase History</button>
             </div>
         </div>)
     }

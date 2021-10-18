@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Next } from 'react-bootstrap/esm/PageItem';
 import { Redirect } from 'react-router-dom'
+import './Login.css';
 
 export class Login extends Component
 {
@@ -104,7 +105,7 @@ export class Login extends Component
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <button class="btn btn-success" type="submit" disabled={!this.ValidateForm()}>Login</button>
+                        <button id="logInButton" class="btn btn-success" type="submit" disabled={!this.ValidateForm()}>Login</button>
                     </div>
                 </div>
                 {this.state.loggedIn == "failed" ? (<h1>Failed to log in</h1>) : (<h1></h1>)}
@@ -123,7 +124,7 @@ export class Login extends Component
 
         let content;
         content = this.state.loggedIn ? this.GetLoggedInForm() : this.GetLogInForm();
-        return content;
+        return (<div id="profileContainer">{content}</div>);
     }
 
     OnUserNameChange(e) {
