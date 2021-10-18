@@ -233,7 +233,7 @@ export class MissionStatus extends Component {
                 break;
             default:
                 {
-                    content = (<div><h1>NoContent</h1></div>)
+                    
                 }
                 break;
         }

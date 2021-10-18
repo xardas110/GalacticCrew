@@ -100,7 +100,7 @@ export class MyShipsPanel extends Component {
 
     render() {  
 
-        let content = this.state.hasShips ? MyShipsPanel.renderShipTable(this.state.shipData, this.state.rowCallback) : (<h1>No Ships!</h1>)
+        let content = this.state.hasShips ? MyShipsPanel.renderShipTable(this.state.shipData, this.state.rowCallback) : (<h1></h1>)
 
         return content;
     }

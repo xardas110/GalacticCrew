@@ -11,7 +11,8 @@ export class Profile extends Component {
             nickName: "",
             currency: null,
             playerLevel: null,
-            hasNickname:false
+            hasNickname: false,
+            loading: true
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -35,7 +36,8 @@ export class Profile extends Component {
                     nickName: data.nickName,
                     playerLevel: data.playerLevel,
                     currency:data.currency,
-                    hasNickname: true
+                    hasNickname: true,
+                    loading: false
                 })
             }
 
@@ -93,7 +95,7 @@ export class Profile extends Component {
     }
 
     GetProfile(nickname, level, currency) {
-        return (<div id="profileContainer">
+        return (<div id="profileContainerInner">
             <div id="textContainer">
                 <h4 > Nickname:</h4>              
                 <h4 > Level:</h4>                           
@@ -115,9 +117,13 @@ export class Profile extends Component {
     render() {
 
         let content;
-        content = this.state.hasNickname ? this.GetProfile(this.state.nickName, this.state.playerLevel, this.state.currency) : this.GetNicknameForm();
+        content = this.state.loading ?
+            <h5></h5> :
+            this.state.hasNickname ?
+                this.GetProfile(this.state.nickName, this.state.playerLevel, this.state.currency) :
+                this.GetNicknameForm();
 
-        return content;
+        return (<div id="profileContainer">{content}</div>);
     }
 
 }

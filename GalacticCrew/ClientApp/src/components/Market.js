@@ -29,6 +29,7 @@ export class Market extends Component {
 
         this.OnRowSelect = this.OnRowSelect.bind(this);
         this.OnBuyShip = this.OnBuyShip.bind(this);
+        this.ShipInformation = this.ShipInformation.bind(this);
     }
 
     async fetchMarket() {
@@ -44,7 +45,7 @@ export class Market extends Component {
             case 200:
                 {
                     const data = await response.json();
-                    this.setState({ shipData: data, marketStatus: status.shipBought });
+                    this.setState({ shipData: data, marketStatus: status.shipBought });                 
                 }
                 break;
             default:
@@ -67,7 +68,13 @@ export class Market extends Component {
         switch (response.status) {
             case 200:
                 {
-                    this.fetchMarket();                 
+                    this.fetchMarket();    
+                    if (this.state.hasShipID) {
+                        console.log("inside fetchbuyship status 200");
+                        console.log(this.state.selectedRow);
+                        var newCurrency = this.props.playerCurrency - this.state.selectedRow.shipCost;
+                        this.setState({ playerCurrency: newCurrency });
+                    }
                 }
                 break;
             default:
@@ -91,12 +98,14 @@ export class Market extends Component {
 
     OnBuyShip() {
         if (this.state.hasShipID) {
-            this.fetchBuyShip(this.state.shipID);
-            var newCurrency = this.props.playerCurrency - this.state.selectedRow.shipCost;
-            this.setState({ playerCurrency: newCurrency });
+            this.fetchBuyShip(this.state.shipID);         
         }
     }
-        
+
+    ShipInformation(row, isSelected) {
+        this.setState({ selectedRow: row });
+    }
+
     render() {
         return (<div id="marketContainer">
             <div id="marketHeader">
@@ -106,7 +115,7 @@ export class Market extends Component {
                 {MyShipsPanel.renderShipTable(this.state.shipData, this.OnRowSelect)}
             </div>
             <div id="shipInformationPanel">
-                <ShipInformationPanel hasShipID={this.state.hasShipID} shipID={this.state.shipID} />
+                <ShipInformationPanel hasShipID={this.state.hasShipID} shipID={this.state.shipID} shipInformationCallback={this.ShipInformation}/>
             </div>
             <div className="marketButton">
                 <h1> Your money: {this.state.playerCurrency} </h1>

@@ -85,7 +85,7 @@ export class ShipInformationPanel extends Component {
     }
 
     render() {  
-        let content = this.state.hasShips ? ShipInformationPanel.renderShipInformation(this.state.shipData) : (<h1>NoContent</h1>)
+        let content = this.state.hasShips ? ShipInformationPanel.renderShipInformation(this.state.shipData) : (<h1></h1>)
         return content;
     }
 

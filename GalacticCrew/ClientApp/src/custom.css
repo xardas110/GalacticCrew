@@ -26,6 +26,38 @@ code {
     font-family: monospace;
 }
 
-.mainContainer{
-    height:1024px;
+/* For Mobile */
+@media screen and (max-height: 540px) {
+    .mainContainer {
+        height: 400px;
+    }
+}
+
+/* For Tablets */
+@media screen and (min-height: 540px) and (max-height: 780px) {
+    .mainContainer {
+        height: 512px;
+    }
+}
+
+/* For 1080p */
+@media screen and (min-height: 780px) and (max-height: 1080px) {
+    .mainContainer {
+        height: 800px;
+    }
+}
+
+/* For 1080p */
+@media screen and (min-width: 1280px) and (max-width: 1920px) {
+    .mainContainer {
+        width: 1000px !important;
+    }
+}
+
+
+/* For 2160p */
+@media screen and (min-height: 1080px) and (max-height: 2160px) {
+    .mainContainer {
+        height: 1024px;
+    }
 }
