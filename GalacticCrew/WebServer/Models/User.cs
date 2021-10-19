@@ -28,20 +28,13 @@ namespace GalacticCrew.WebServer.Models
     {
         public string userName { get; set; }
     }
-    public class PlayerProfile
-    {
-        public string NickName;
-        int PlayerLevel;
-        int Currency;
-        int RankID;
-    }
 
     public class PlayerOnLogInInfo
     {
         public string Username { get; set; }
         public string Nickname { get; set; }
         public int PlayerLevel { get; set; }
-        public int Currency { get; set; }
+        public decimal Currency { get; set; }
         public int RankID { get; set; }
         public string RankType { get; set; }
         public string ShipName { get; set; }

@@ -3,6 +3,15 @@ import { Next } from 'react-bootstrap/esm/PageItem';
 import { Redirect } from 'react-router-dom'
 import './Login.css';
 
+const status =
+{
+    null: 0,
+    redirectProfile: 1,
+    loginForm: 2,
+    loggedInForm:3
+}
+
+
 export class Login extends Component
 {
     static displayName = Login.name;
@@ -13,9 +22,8 @@ export class Login extends Component
         this.state = {
             userName : "",
             password: "",
-            loggedIn: this.props.loggedIn,
-            goto: false,
-            bRedirectProfile: false
+            status: status.loginForm,
+            bWrongPassword: false
         }
 
         this.OnPasswordChange = this.OnPasswordChange.bind(this);
@@ -24,7 +32,6 @@ export class Login extends Component
 
         console.log("login constructor");
         console.log(props);
-
     }
 
     async GetOnLoginData() {
@@ -37,19 +44,27 @@ export class Login extends Component
 
         console.log(response.status);
 
-        if (response.status == 200) {
-            const data = await response.json();
-            return data;
-        } else {
-            this.setState({ bRedirectProfile: true });
-            return null;
+        switch (response.status) {
+            case 200:
+                {
+                    const data = await response.json();
+                    return data;
+                }
+                break;
+            case 422:
+                {
+                    console.log("Database error");
+                    return -1;
+                }
+                break;
+            default:
+                {
+                    return null;
+                }
         }
     }
 
-    async OnSubmit(e)
-    {  
-        e.preventDefault();
-       
+    async FetchLogin() {
         let loginInfo = JSON.stringify(this.state);
 
         const response = await fetch('Api/Login',
@@ -62,19 +77,39 @@ export class Login extends Component
 
         console.log(response.status);
 
-        if (response.status === 200) {
-            var user = await this.GetOnLoginData();
+        switch (response.status) {
+            case 200:
+                {
+                    var user = await this.GetOnLoginData();
 
-            if (user != null) {
-                //To update navigation bar
-                console.log(user);
-                user.loggedIn = true;
-                this.props.setUser(user);
-            }
-            else {
-                console.log("Failed to log in");
-            }
+                    if (user != null) {
+                        console.log(user);
+                        user.loggedIn = true;
+                        //To update navigation bar
+                        this.props.setUser(user);
+                    }
+                    else {
+                        this.setState({ status: status.redirectProfile });
+                    }
+                }
+                break;
+            case 401:
+                {
+                    this.setState({ bWrongLogin: true });
+                }
+                break;
+            default:
+                {
+                    console.log("database error");
+                }
+                break;
         }
+    }
+
+    async OnSubmit(e)
+    {  
+        e.preventDefault();
+        this.FetchLogin();       
     }
 
     componentWillReceiveProps(nextProp) {
@@ -86,9 +121,37 @@ export class Login extends Component
         console.log("componentWillUnmount LOGIN");        
     }
 
+    render() {
+
+        let content;
+        switch (this.state.status) {
+            case status.redirectProfile:
+                {
+                    return (<Redirect to="/profile" />);
+                }
+                break;
+            case status.loginForm:
+                {
+                    content= this.GetLogInForm();
+                }
+                break;
+            case status.loggedInForm:
+                {
+                    content = this.GetLoggedInForm();
+                }
+                break;
+            default:
+                {
+                    content = <h1>Smth went really wrong</h1>
+                }
+                break;
+        }
+
+        return (<div id="profileContainer">{content}</div>);
+    }
 
     GetLogInForm() {
-        return(<form class="form-horizontal" onSubmit={this.OnSubmit}>
+        return (<form class="form-horizontal" onSubmit={this.OnSubmit}>
             <fieldset>
                 <div id="legend">
                     <legend class="">Login</legend>
@@ -119,18 +182,6 @@ export class Login extends Component
         return (<h1>SuccessFully logged in</h1>)
     }
 
-    render() {
-
-        if (this.state.loggedIn)
-            return (<Redirect to="/profile" />);
-
-        if (this.state.bRedirectProfile)
-            return (<Redirect to="/profile" />);
-
-        let content;
-        content = this.state.loggedIn ? this.GetLoggedInForm() : this.GetLogInForm();
-        return (<div id="profileContainer">{content}</div>);
-    }
 
     OnUserNameChange(e) {
         this.setState({

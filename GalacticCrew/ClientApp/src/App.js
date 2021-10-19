@@ -35,7 +35,6 @@ export default class App extends Component {
         this.UpdatePlayerCurrency = this.UpdatePlayerCurrency.bind(this);
         console.log("App logger: ");
         console.log(this.props);
-
     }
 
     UpdateUserState(userState) {
@@ -63,16 +62,32 @@ export default class App extends Component {
 
         console.log(response.status);
 
-        if (response.status == 200) {
-            const data = await response.json();
-            console.log("App fetch data");
-            console.log(data);
-            data.loggedIn = true;
 
-            this.setState({
-                user: data
-            });
+        switch (response.status) {
+            case 200:
+                {
+                    const data = await response.json();
+                    console.log("App fetch data");
+                    console.log(data);
+                    data.loggedIn = true;
+
+                    this.setState({
+                        user: data
+                    });
+                }
+                break;
+            case 404:
+                {
+
+                }
+                break;
+            default:
+                {
+
+                }
+                break;
         }
+
     }
 
     render() {

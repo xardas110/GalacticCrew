@@ -110,7 +110,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                         profile.Nickname = data[1].ToString();
                         profile.RankType = data[2].ToString();
                         profile.PlayerLevel = (int)data[3];
-                        profile.Currency = (int)data[4];
+                        profile.Currency = Convert.ToDecimal(data[4]);
                         profile.RankID = (int)data[5];                       
                         profile.ShipName = data[6].ToString();
 
@@ -149,7 +149,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                     {
                         profile.nickName = data[0].ToString();
                         profile.playerLevel = (int)data[1];
-                        profile.currency = (int)data[2];
+                        profile.currency = Convert.ToDecimal(data[2]);
                     }
 
                 }
@@ -247,7 +247,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
         /// </returns>
         public bool CreateUser(User user)
         {
-            var query = "insert into users (Username, Password) VALUES(@Username, @Password)";
+            var query = "call sp_CreateUser(@Username, @Password)";
             bool bSuccess = false;
 
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))

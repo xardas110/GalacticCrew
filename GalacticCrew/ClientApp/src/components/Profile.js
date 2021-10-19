@@ -46,12 +46,13 @@ export class Profile extends Component {
                     currency: data.currency,
                     status: status.profile
                 })
+            } else {
+                this.setState({ status: status.nicknameForm });
             }
-
         } else {
             console.log("profile fetch failed response");
             console.log(response.status);
-            this.setState({ status: status.nicknameForm });
+            
         }
 
     }

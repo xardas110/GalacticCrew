@@ -11,7 +11,7 @@ namespace GalacticCrew.WebServer.Models
 
         public int playerLevel { get; set; }
 
-        public int currency { get; set; }
+        public decimal currency { get; set; }
     }
 
     public class PlayerCurrency
