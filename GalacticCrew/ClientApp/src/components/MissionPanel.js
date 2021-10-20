@@ -38,10 +38,6 @@ export class MissionPanel extends Component {
              dataField: 'missionReward',
              text: 'Mission Reward',
              sort: true
-         }, {
-             dataField: 'missionDistance',
-             text: 'Mission Distance',
-             sort: true
          }];
 
       const selectRow = {

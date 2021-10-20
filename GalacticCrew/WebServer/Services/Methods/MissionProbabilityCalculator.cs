@@ -67,5 +67,19 @@ namespace GalacticCrew.WebServer.Services.Methods
 
             return 1.0f;
         }
+        /// <summary>
+        /// Mission probability for success
+        /// </summary>
+        /// <param name="MPI"></param>
+        /// <returns>Returns probability in %</returns>
+        static public float GetMissionProbability(MissionProbabilityInformation MPI)
+        {
+            float result = 1.0f;
+            result *= MissionProbabilityCalculator.GetRatioBasedOnFuel(MPI.ShipLevel, MPI.ShipFuelCapacity, MPI.MissionDistance);
+            result *= MissionProbabilityCalculator.GetRatioBasedOnLevel(MPI.ShipLevel, MPI.MissionRank);
+            result *= MissionProbabilityCalculator.GetRatioBasedOnType(MPI.ShipType, MPI.MissionType);
+            return result *= 100.0f;
+        }
+
     }
 }

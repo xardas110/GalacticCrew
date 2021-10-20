@@ -6,6 +6,24 @@ import { Button, Container } from 'react-bootstrap';
 import { MissionInformation } from "./MissionInformation"
 import './ShipInformationPanel.css';
 
+const marketColumns = [{
+    dataField: 'shipTitle',
+    text: 'Ship Name',
+    sort: true
+}, {
+    dataField: 'shipType',
+    text: 'Type',
+    sort: true
+}, {
+    dataField: 'shipFuelCapacity',
+    text: 'Fuel Capacity',
+    sort: true
+},{
+    dataField: 'shipCost',
+    text: 'Cost',
+    sort: true
+}];
+
 export class ShipInformationPanel extends Component {
     static displayName = ShipInformationPanel.name;
 
@@ -71,21 +89,15 @@ export class ShipInformationPanel extends Component {
         }
     }
 
-    static renderShipInformation(shipData) {
-        return (<div className="shipInfo">
-            <h3 className="infoText">Name:</h3>
-            <h3 className="statusText">{shipData.shipTitle}</h3>
-            <h3 className="infoText">Type:</h3>    
-            <h3 className="statusText">{shipData.shipType}</h3>
-            <h3 className="infoText">Fuel:</h3>
-            <h3 className="statusText">{shipData.shipFuelCapacity}</h3>
-            <h3 className="infoText">Level:</h3>
-            <h3 className="statusText">{shipData.shipLevel}</h3>
-        </div>)
+    static renderShipInformation(shipData, columns, keyField) {
+        return (<Container id="missionInfoTableContainer">
+            <BootstrapTable responseive="sm" id="missionInfoTable" headerClasses="hc" rowClasses="rc" keyField={keyField } data={[shipData]} columns={columns} />
+            </Container>
+        )
     }
 
     render() {  
-        let content = this.state.hasShips ? ShipInformationPanel.renderShipInformation(this.state.shipData) : (<h1></h1>)
+        let content = this.state.hasShips ? ShipInformationPanel.renderShipInformation(this.state.shipData, marketColumns, "shipTitle") : (<h1></h1>)
         return content;
     }
 

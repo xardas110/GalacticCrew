@@ -58,12 +58,14 @@ namespace GalacticCrew.WebServer.Controllers
                 Console.WriteLine("Running mission information");
                 Console.WriteLine(missionID);
                 Console.WriteLine(missionInformation);
-                if (iStatus == 1)
-                    return Ok(missionInformation);
-                else if (iStatus == 0)
-                    return NotFound("Mission not found by Mission ID");
 
-                return UnprocessableEntity("Database exception error");
+                switch(iStatus)
+                {
+                    case 1: return Ok(missionInformation);
+                    case 0: return NotFound("Mission not found by Mission ID");
+                    default:return UnprocessableEntity("Database error!");
+                }
+
             }
             catch(Exception e)
             {
@@ -90,8 +92,9 @@ namespace GalacticCrew.WebServer.Controllers
 
                 switch(iStatus)
                 {
+                    case 1: return BadRequest("You Already have a mission!");
                     case 2: return Ok("Mission Accepted");
-                    default: return UnprocessableEntity("Database exception error");
+                    default: return UnprocessableEntity("Database error!");
                 }
             }
             catch (Exception e)

@@ -69,12 +69,14 @@ namespace GalacticCrew.WebServer.Controllers
                 ShipInformation shipInformation = new ShipInformation();
                 int iStatus = _mysql.GetShipByShipID(shipID, shipInformation);
 
-                if (iStatus == 1)
-                    return Ok(shipInformation);
-                else if (iStatus == 0)
-                    return NoContent();
 
-                return UnprocessableEntity("Database exception error");
+                switch(iStatus)
+                {
+                    case 1:     return Ok(shipInformation);
+                    case 0:     return NoContent();
+                    default:    return UnprocessableEntity("Database error!");
+                }
+
             }
             catch (Exception e)
             {
@@ -98,25 +100,24 @@ namespace GalacticCrew.WebServer.Controllers
                 MissionProbabilityInformation MPI = new MissionProbabilityInformation();
                 int iStatus = _mysql.GetMissionProbabilityInformation(uIDN.UserID, missionID, shipID, MPI);
 
-                if (iStatus == 1)
+                switch(iStatus)
                 {
-                    MissionProbabilityResult missionProbabilityResult = new MissionProbabilityResult();
-                    missionProbabilityResult.probability = 1.0f;
-                    missionProbabilityResult.probability *= MissionProbabilityCalculator.GetRatioBasedOnFuel(MPI.ShipLevel, MPI.ShipFuelCapacity, MPI.MissionDistance);
-                    missionProbabilityResult.probability *= MissionProbabilityCalculator.GetRatioBasedOnLevel(MPI.ShipLevel, MPI.MissionRank);
-                    missionProbabilityResult.probability *= MissionProbabilityCalculator.GetRatioBasedOnType(MPI.ShipType, MPI.MissionType);
-                    missionProbabilityResult.probability *= 100.0f;
-                    return Ok(missionProbabilityResult);
-                }
-                else if (iStatus == 0)
-                    return NoContent();
+                    case 1:
+                    {
+                        MissionProbabilityResult missionProbabilityResult = new MissionProbabilityResult();
+                        missionProbabilityResult.probability = MissionProbabilityCalculator.GetMissionProbability(MPI);
 
-                return UnprocessableEntity("Database exception error");
+                                return Ok(missionProbabilityResult);
+                    }
+                    case 0:     return NoContent();
+                    default:    return UnprocessableEntity("Something went wrong");
+
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                return UnprocessableEntity("Something went wrong");
+                return UnprocessableEntity("Database exception error");
             }
         }
 
@@ -192,15 +193,54 @@ namespace GalacticCrew.WebServer.Controllers
                 if (uIDN == null)
                     return Forbid("Token/TokenClaim is invalid");
 
-                int iStatus = _mysql.CompleteMission(uIDN.UserID);
+
+                UserShipAndMission usam = new UserShipAndMission();
+                int iStatus = _mysql.GetUserShipIDAndMissionID(uIDN.UserID, usam);
+
+                if (iStatus != 1)
+                {
+                    return UnprocessableEntity("Database error");
+                }
+
+                MissionProbabilityInformation MPI = new MissionProbabilityInformation();
+                iStatus = _mysql.GetMissionProbabilityInformation(uIDN.UserID, usam.missionID, usam.shipID, MPI);
+
+                if (iStatus != 1)
+                {
+                    return UnprocessableEntity("Database error");
+                }
+
+                //in %
+                int probabilty = Convert.ToInt32(MissionProbabilityCalculator.GetMissionProbability(MPI));
+
+                Random rd = new Random();
+                int randNum = rd.Next(0, 100);
+                Console.WriteLine("Player probability: " + probabilty);
+                Console.WriteLine("Rand Nr from server" + randNum);
+
+                if (randNum > probabilty)
+                {
+                    iStatus = _mysql.MissionFailed(uIDN.UserID);
+                    if (iStatus != 2)
+                        return UnprocessableEntity("Database error");
+
+                    return BadRequest("Mission Failed");
+                }
+
+                iStatus = _mysql.CompleteMission(uIDN.UserID);
                 Console.WriteLine("I STATUS UNDER");
                 Console.WriteLine(iStatus);
                 switch (iStatus)
                 {
-                    case 1: return Ok();
+                    case  1: return Ok("Mission Complete!");
+                    case -2: return BadRequest("You don't have the mission!");
+                    case -3: return BadRequest("Mission not started!");
+                    case -4: return BadRequest("Mission not complete!");
+                    case -5: return BadRequest("Database error -5");
+                    case -6: return BadRequest("Database error -6");
+                    case -7: return BadRequest("Database error -7");
                     default: return UnprocessableEntity("Database exception error");
                 }
-
             }
             catch (Exception e)
             {

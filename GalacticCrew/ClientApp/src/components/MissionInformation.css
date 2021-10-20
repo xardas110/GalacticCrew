@@ -21,6 +21,7 @@
     flex-direction: column;
     color: white;
     width: 50%;
+    white-space:nowrap;
 }
 
 .rc{
@@ -30,6 +31,7 @@
     color:white;
     width:100%;
     font-size:2rem;
+    white-space:nowrap;
 }
 tbody{
     width:100%;

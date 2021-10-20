@@ -6,6 +6,16 @@ import { Button, Container } from 'react-bootstrap';
 import { MissionInformation } from "./MissionInformation"
 import './MyShipsPanel.css';
 
+
+const status =
+{
+    noShips:0,
+    hasShips: 1,
+    unexpectedError: 2,
+    loading: 3,
+    redirectMarket: 4
+}
+
 export class MyShipsPanel extends Component {
     static displayName = MyShipsPanel.name;
 
@@ -16,9 +26,7 @@ export class MyShipsPanel extends Component {
             shipData: [],
             isSelected: false,
             selectedRow: {},
-            loading: true,
-            hasShips: false,
-            unexpectedError: false,
+            status: status.loading,
             rowCallback: this.OnRowSelect
         };
 
@@ -55,18 +63,18 @@ export class MyShipsPanel extends Component {
                 const data = await response.json();
                 this.setState({
                     shipData: data,
-                    hasShips: true,
+                    status: status.hasShips
                 });
             }
             break;
             case 204:
             {
-                this.setState({ hasShips: false })
+                    this.setState({ status: status.noShips });
             }
             break;
             default:
             {
-                this.setState({ unexpectedError: true });
+                    this.setState({ status: status.unexpectedError });
             }
             break;
         }
@@ -98,9 +106,57 @@ export class MyShipsPanel extends Component {
     }
 
 
+    static renderShipTableCustomColumn(shipData, callbackFunc, customColumns) {
+        const selectRow = {
+            mode: 'radio',
+            clickToSelect: true,
+            onSelect: (row, isSelect, rowIndex, e) => {
+                callbackFunc(row, isSelect);
+            },
+            bgColor: 'rgba(80,18,115,0.96)'
+        };
+
+        return (<BootstrapTable headerClasses="headerTable" rowClasses="rowTable" selectRow={selectRow} keyField="shipID" data={shipData} columns={customColumns} />)
+    }
+
     render() {  
 
-        let content = this.state.hasShips ? MyShipsPanel.renderShipTable(this.state.shipData, this.state.rowCallback) : (<h1></h1>)
+        let content;
+
+        switch (this.state.status) {
+            case status.hasShips:
+                {
+                    content = MyShipsPanel.renderShipTable(this.state.shipData, this.state.rowCallback);
+                }
+                break;
+            case status.noShips:
+                {
+                    content = (<div id="noShipsContainer">
+                        <h3>No ships! Go to market to buy a ship</h3>
+                        <div className="noShipsButton">
+                            <Button variant="primary" size="lg" onClick={e => { this.setState({ status: status.redirectMarket }) }}>
+                                Go: Market
+                            </Button>
+                        </div>
+                    </div>);
+                }
+                break;
+            case status.loading:
+                {
+                    content = (<h1>loading...</h1>);
+                }
+                break;
+            case status.redirectMarket:
+                {
+                    return <Redirect to="/market"/>
+                }
+                break;
+            default:
+                {
+                    content = (<h1>Unexpected error</h1>);
+                }
+                break;
+        }
 
         return content;
     }

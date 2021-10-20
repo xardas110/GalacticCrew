@@ -21,4 +21,14 @@ namespace GalacticCrew.WebServer.Models
         public int ShipCost { get; set; }
         public int ShipUpgradeCost { get; set; }
     }
+    public class MyShipsInformation
+    {
+        public string ShipType { get; set; }
+        public string ShipName { get; set; }
+
+        public decimal ShipFuelCapacity { get; set; }
+        public int ShipLevel { get; set; }
+        public int ShipCost { get; set; }
+        public int ShipUpgradeCost { get; set; }
+    }
 }

@@ -162,7 +162,7 @@ namespace GalacticCrew.WebServer.Controllers
         }
 
         [HttpPost("ChangeNickname")]
-        public IActionResult ChangeNickname(string newNick)
+        public IActionResult ChangeNickname(Nickname nick)
         {
             try
             {
@@ -173,14 +173,15 @@ namespace GalacticCrew.WebServer.Controllers
                 if (uIDN == null)
                     return Forbid("Token/TokenClaim is invalid");
 
-                int iStatus = _mysql.ChangeNickname(uIDN.UserID, newNick);
+                int iStatus = _mysql.ChangeNickname(uIDN.UserID, nick.nickName);
+                Console.WriteLine("ISTATUS RETURNED FROM MYSQL:  " + iStatus);
 
                 switch (iStatus)
                 {
-                    case 1:     return Ok("Nickname changed");
-                    case 0:     return BadRequest("Failed to change Nickname");
-                    default:    return UnprocessableEntity("Something went wrong");
-
+                    case  1:     return Ok("Nickname changed");
+                    case -2:     return BadRequest("Nickname exists!");
+                    case -3:     return BadRequest("Database error");
+                    default:     return UnprocessableEntity("Something went wrong");
                 }
             }
             catch (Exception e)

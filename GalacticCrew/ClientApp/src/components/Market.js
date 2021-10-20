@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom'
-import { MissionProbability } from './MissionProbability';
 import { MyShipsPanel } from './MyShipsPanel';
 import { ShipInformationPanel } from './ShipInformationPanel';
 import './Market.css';
-import { MissionProgress } from './MissionProgress';
 
 const status = {
-    Null: "Null",
-    shipBought:"shipBought"
+    null: 0,
+    shipBought: 1,
+    shipNotBought: 2,
+    market: 3,
+    loading: 4
 }
 
 export class Market extends Component {
@@ -24,16 +24,16 @@ export class Market extends Component {
             hasShipID: false,
             shipID: -1,
             playerCurrency: -1,
-            marketStatus: status.shipBought
+            status: status.market
         }
-
+        this.tradeStatusRef = React.createRef();
         this.OnRowSelect = this.OnRowSelect.bind(this);
         this.OnBuyShip = this.OnBuyShip.bind(this);
         this.ShipInformation = this.ShipInformation.bind(this);
     }
 
 
-    static async FetchPlayerCurrency(outCurrency) {
+    static async FetchPlayerCurrency() {
 
         const response = await fetch('Api/PlayerCurrency',
             {
@@ -43,11 +43,19 @@ export class Market extends Component {
 
         console.log(response.status);
 
-        if (response.status == 200) {
-            const data = await response.json();
-            return data.currency;
-        }
-        return -1;
+        switch (response.status) {
+            case 200:
+                {
+                    const data = await response.json();
+                    return data.currency;
+                }
+                break;
+            default:
+                {
+                    return -1;
+                }
+                break;
+        }     
     }
 
     async fetchMarket() {
@@ -63,7 +71,9 @@ export class Market extends Component {
             case 200:
                 {
                     const data = await response.json();
-                    this.setState({ shipData: data, marketStatus: status.shipBought });                 
+                    console.log("market response data");
+                    console.log(data);
+                    this.setState({ shipData: data, marketStatus: status.Market });                 
                 }
                 break;
             default:
@@ -90,7 +100,7 @@ export class Market extends Component {
                     if (this.state.hasShipID) {
                         console.log("inside fetchbuyship status 200");
                         console.log(this.state.selectedRow);
-                        var newCurrency = this.props.playerCurrency - this.state.selectedRow.shipCost;
+                        var newCurrency = await Market.FetchPlayerCurrency();
                         this.setState({ playerCurrency: newCurrency });
                     }
                 }
@@ -130,9 +140,8 @@ export class Market extends Component {
         this.setState({ selectedRow: row });
     }
 
-    render() {
-        return (<div id="marketContainer">
-            <div id="marketHeader">
+    renderMarket() {
+        return(<div><div id="marketHeader">
                 <h1>Spaceships for Sale</h1>
             </div>
             <div id="shipTable">
@@ -143,10 +152,49 @@ export class Market extends Component {
             </div>
             <div className="marketButton">
                 <h1> Your money: {this.state.playerCurrency} </h1>
+                <h1 ref={this.tradeStatusRef}></h1>
                 <Button variant="primary" size="lg" onClick={this.OnBuyShip} disabled={!this.state.hasShipID}>
                     Buy Ship
                 </Button>
-            </div>
+            </div></div>)
+    }
+
+    render() {
+        let content;
+
+        switch (this.state.status) {
+            case status.market:
+                {
+                    content = this.renderMarket();
+                }
+                break;
+            case status.shipBought:
+                {
+                    content = this.renderMarket();
+                    this.tradeStatusRef.current.innerHTML = "Success Bought ship";
+                    setTimeout(e => { this.tradeStatusRef.current.innerHTML = ""}, 2000);
+                }
+                break;
+            case status.shipNotBought:
+                {
+                    content = this.renderMarket();
+                    this.tradeStatusRef.current.innerHTML = "Not enough currency";
+                    setTimeout(e => { this.tradeStatusRef.current.innerHTML = "" }, 2000);
+                }
+                break;
+            case status.loading:
+                {
+                    content = (<h1>Loading...</h1>);
+                }
+                break;
+            default:
+                {
+                    content = (<h1>Unexpected error</h1>);
+                }
+        }
+
+        return (<div id="marketContainer">
+            {content}
         </div>)
     }
 

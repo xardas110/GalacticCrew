@@ -26,7 +26,8 @@ export class MissionStatus extends Component {
             unexpectedError: false,
             redirectBackToMissionPanel: false,
             hasShipID: false,
-            shipID:-1
+            shipID: -1,
+            shipName:""
         }
         this.fetchOngoingMission = this.fetchOngoingMission.bind(this);
         this.RedirectBackToMissionPanel = this.RedirectBackToMissionPanel.bind(this);
@@ -116,7 +117,8 @@ export class MissionStatus extends Component {
         switch (response.status) {
             case 200:
                 {
-                    this.fetchOngoingMission();
+                    this.props.setShipName(this.state.shipName);
+                    //this.fetchOngoingMission();
                 }
                 break;
             default:
@@ -151,7 +153,8 @@ export class MissionStatus extends Component {
         if (row.shipID) {
             this.setState({
                 hasShipID: true,
-                shipID: row.shipID
+                shipID: row.shipID,
+                shipName: row.shipTitle
             })
         }
     }
@@ -223,7 +226,7 @@ export class MissionStatus extends Component {
                 break;
             case status.InProgress:
                 {
-                    content = this.renderMissionInProgress(this.state.missionInformation.missionStartedDate, this.state.missionInformation.missionDuration, this.state.missionInformation.missionTitle)
+                    content = this.renderMissionInProgress(this.state.missionInformation.missionStartedDate, this.state.missionInformation.missionDuration, this.state.missionInformation.missionTitle);                   
                 }
                 break;
             case status.NotStarted:

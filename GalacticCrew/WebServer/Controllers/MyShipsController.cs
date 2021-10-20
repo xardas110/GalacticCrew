@@ -54,5 +54,34 @@ namespace GalacticCrew.WebServer.Controllers
                 return UnprocessableEntity("Something went wrong");
             }
         }
+
+        [HttpGet]
+        [Route("MyShipInformation/{shipID}")]
+        public IActionResult MyShipInformation(int shipID)
+        {
+            try
+            {
+                string token = Request.Cookies["GalacticCrew"];
+                UserIDName uIDN = _securityService.VerifyAndGetClaims(token);
+
+                if (uIDN == null)
+                    return Forbid("Token/TokenClaim is invalid");
+
+                MyShipsInformation myShipInformation = new MyShipsInformation();
+
+                int iStatus = _mysql.MyShipInfo(uIDN.UserID, shipID, myShipInformation);
+
+                switch (iStatus)
+                {
+                    case 1: return Ok(myShipInformation);
+                    default: return UnprocessableEntity("Database exception error");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return UnprocessableEntity("Something went wrong");
+            }
+        }
     }
 }

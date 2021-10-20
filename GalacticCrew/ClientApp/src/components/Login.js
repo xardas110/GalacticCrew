@@ -8,7 +8,8 @@ const status =
     null: 0,
     redirectProfile: 1,
     loginForm: 2,
-    loggedInForm:3
+    loggedInForm: 3,
+    unexpectedError:4
 }
 
 
@@ -87,9 +88,10 @@ export class Login extends Component
                         user.loggedIn = true;
                         //To update navigation bar
                         this.props.setUser(user);
+                        this.setState({ status: status.redirectProfile });
                     }
                     else {
-                        this.setState({ status: status.redirectProfile });
+                        this.setState({ status: status.unexpectedError });
                     }
                 }
                 break;
@@ -110,6 +112,12 @@ export class Login extends Component
     {  
         e.preventDefault();
         this.FetchLogin();       
+    }
+
+    componentDidMount() {
+        if (this.props.loggedIn) {
+            this.setState({ status: status.redirectProfile });
+        }
     }
 
     componentWillReceiveProps(nextProp) {

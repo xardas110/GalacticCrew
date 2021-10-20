@@ -3,12 +3,16 @@ import { Button, Container } from 'react-bootstrap';
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import { Redirect } from 'react-router-dom'
 import "./MissionProgress.css";
-const missionStatus =
+
+const status =
 {
-    Null:"Null",
-    InProgress: "InProgress",
-    Finished: "Finished",
-    Complete: "Complete"
+    null:0,
+    inProgress: 1,
+    finished: 2,
+    complete: 3,
+    redirectMissionPanel: 4,
+    unexpectedError: 5,
+    failed:6
 }
 
 export class MissionProgress extends Component {
@@ -23,7 +27,7 @@ export class MissionProgress extends Component {
             missionTitle: "",
             delta: 0.0,
             timer: setInterval(() => { this.MissionTimer() }, 1000),
-            missionStatus: missionStatus.Null,
+            status: status.inProgress,
             unexpectedError: false,
             timeLeft: 0
         };
@@ -44,16 +48,17 @@ export class MissionProgress extends Component {
         switch (response.status) {
             case 200:
                 {
-                    this.setState({ missionStatus: missionStatus.Complete });
+                    this.setState({ status: status.complete });
                 }
                 break;
-            case 204:
+            case 400:
                 {
+                    this.setState({status:status.failed});
                 }
                 break;
             default:
                 {
-                    this.setState({ unexpectedError: true });
+                    this.setState({ status: status.unexpectedError });
                 }
                 break;
         }
@@ -96,7 +101,7 @@ export class MissionProgress extends Component {
 
         if (delta >= 1.0) {
             clearInterval(this.state.timer);
-            this.setState({ missionStatus: missionStatus.Finished, timeLeft:(0) + "Minutes" });
+            this.setState({ status: status.finished, timeLeft:(0) + "Minutes" });
         }
     }
 
@@ -104,14 +109,8 @@ export class MissionProgress extends Component {
         this.fetchCompleteMission();
     }
 
-    render() {
-
-        if (this.state.missionStatus == missionStatus.Complete) {
-            return (<Redirect to="/MissionPanel" />)
-        }
-
-        return (<div className="missionProgressMain">
-            <div className="missionProgressTitle">
+    renderMissionInProgress() {
+        return (<div><div className="missionProgressTitle">
                 <h1>Mission in progress: {this.state.missionTitle}</h1>
             </div>
             <div id="inFlightImageContainer">
@@ -122,13 +121,50 @@ export class MissionProgress extends Component {
                 <ProgressBar now={this.state.delta * 100} label={this.state.delta * 100 + "%"} />
             </div>
             <div id="completeMissionButton">
-                <Button variant="primary" size="lg" onClick={this.OnCompleteMission} hidden={!(this.state.missionStatus == missionStatus.Finished)}>
+                <Button variant="primary" size="lg" onClick={this.OnCompleteMission} hidden={!(this.state.status == status.finished)}>
                     Complete Mission
                 </Button>
-                <Button variant="primary" size="lg" onClick={this.props.cancelMissionCallback} hidden={this.state.missionStatus == missionStatus.Finished}>
+                <Button variant="primary" size="lg" onClick={this.props.cancelMissionCallback} hidden={this.state.status == status.finished}>
                     Cancel Mission
                 </Button>
             </div>
+        </div>)     
+    }
+
+    render() {
+
+        let content;
+
+        switch (this.state.status) {
+            case status.inProgress:
+                {
+                    content = this.renderMissionInProgress();
+                }
+                break;
+            case status.finished:
+                {
+                    content = this.renderMissionInProgress();
+                }
+                break;
+            case status.complete:
+                {
+                    content = (<h1>Mission Success!!</h1>);
+                }
+                break;
+            case status.failed:
+                {
+                    content = (<h1>Mission failed!</h1>);
+                }
+                break;
+            default:
+                {
+                    content = (<h1>Hmm smth is wrong</h1>);
+                }
+                break;
+        }
+
+        return (<div className="missionProgressMain">
+            {content}
         </div>)
     }
 

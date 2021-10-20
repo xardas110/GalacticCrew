@@ -622,7 +622,15 @@ namespace GalacticCrew.WebServer.Services.MySQL
         /// Completes a missions
         /// </summary>
         /// <param name="userID"></param>
-        /// <returns>1 if success, -1 if fails</returns>
+        /// <returns>
+        ///  1 if success
+        /// -2 if player doesn't have the mission
+        /// -3 if mission not started or smth went rly wrong
+        /// -4 if Mission not complete
+        /// -5 if mission reward is null or less
+        /// -6 if MYSQL update statement failed
+        /// -7 if MYSQL deletion fails
+        /// </returns>
         public int CompleteMission(int userID)
         {
             var query = "call sp_CompleteMission(@UserID)";
@@ -692,12 +700,58 @@ namespace GalacticCrew.WebServer.Services.MySQL
             }
             return iSuccess;
         }
+
+        /// <summary>
+        /// Used to calculate the mission probabilty
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="shipList"></param>
+        /// <returns>1 if success, 0 if failed, -1 if database error</returns>
+        public int GetUserShipIDAndMissionID(int userID, UserShipAndMission usam)
+        {
+            var query = "call sp_MissionID_ShipID(@UserID)";
+            int iSuccess = -1;
+
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.Add("@UserID", MySqlDbType.Int32, 11).Value = userID;
+
+                try
+                {
+                    connection.Open();
+                    MySqlDataReader data = cmd.ExecuteReader();
+                    iSuccess = 0;
+                    while (data.Read())
+                    {
+                        usam.shipID = Convert.ToInt32(data[0]);
+                        usam.missionID = Convert.ToInt32(data[1]);
+                        iSuccess += 1;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    iSuccess = -1;
+                }
+                connection.Close();
+            }
+            return iSuccess;
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="userID"></param>
         /// <param name="shipID"></param>
-        /// <returns>-1 exception error</returns>
+        /// <returns>
+        /// 1 if success
+        /// -1 if Exception error
+        /// -2 if Player already owns the ship
+        /// -3 if Player can't afford
+        /// -4 if MYSQL insertion failed maybe due to ship not existing or foreign key fails
+        /// -5 if MYSQL currency update fails
+        /// </returns>
         public int BuyShip(int userID, int shipID)
         {
             var query = "call sp_BuyShip(@UserID, @ShipID)";
@@ -756,6 +810,51 @@ namespace GalacticCrew.WebServer.Services.MySQL
             }
             return iSuccess;
         }
+        /// <summary>
+        /// Get information by a owned ship
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="shipID"></param>
+        /// <returns>1 row if success, 0 if failed, -1 if exeption error</returns>
+        public int MyShipInfo(int userID, int shipID, MyShipsInformation myShipsInformation)
+        {
+            var query = "call sp_GetShipInformationByUserID(@UserID, @ShipID)";
+            int iSuccess = -1;
+
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.Add("@UserID", MySqlDbType.Int32, 11).Value = userID;
+                cmd.Parameters.Add("@ShipID", MySqlDbType.Int32, 11).Value = shipID;
+
+                try
+                {
+                    connection.Open();
+                    
+                    iSuccess = 0;
+                    var data = cmd.ExecuteReader();
+
+                    while(data.Read())
+                    {
+                        myShipsInformation.ShipType = Convert.ToString(data[0]);
+                        myShipsInformation.ShipName = Convert.ToString(data[1]);
+                        myShipsInformation.ShipFuelCapacity = Convert.ToDecimal(data[2]);
+                        myShipsInformation.ShipLevel = Convert.ToInt32(data[3]);
+                        myShipsInformation.ShipUpgradeCost = Convert.ToInt32(data[4]);
+                        iSuccess += 1;
+                    }
+
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    iSuccess = -1;
+                }
+                connection.Close();
+            }
+            return iSuccess;
+        }
 
         public int GetPlayerCurrency(int userID, PlayerCurrency playerCurrency)
         {
@@ -789,7 +888,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
         /// </summary>
         /// <param name="userID"></param>
         /// <param name="nickName"></param>
-        /// <returns> 1 if success, 0 if no changes,-1 SQL error</returns>
+        /// <returns> 1 if success, -2 if nickname already exist, -3 if failed to update new nickname,-1 SQL error</returns>
         public int ChangeNickname(int userID, string nickName)
         {
             var query = "call sp_ChangePlayerNickname(@UserID, @NickName)";
@@ -804,7 +903,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
                 try
                 {
                     connection.Open();                
-                    iSuccess = cmd.ExecuteNonQuery();
+                    iSuccess = Convert.ToInt32(cmd.ExecuteScalar());
                 }
 
                 catch (Exception e)
@@ -817,6 +916,36 @@ namespace GalacticCrew.WebServer.Services.MySQL
             return iSuccess;
         }
 
+        /// <summary>
+        /// If the player fails the missions it gets deleted from the database
+        /// </summary>
+        /// <param name="userID">UserID</param>
+        /// <returns>2 if success, 1 if failed, 0 user does't exist, -1 database error</returns>
+        public int MissionFailed(int userID)
+        {
+            var query = "call sp_FailedMission(@UserID)";
+            int iSuccess = -1;
+
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.Add("@UserID", MySqlDbType.Int32, 11).Value = userID;
+
+                try
+                {
+                    connection.Open();
+                    iSuccess = cmd.ExecuteNonQuery();
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    iSuccess = -1;
+                }
+                connection.Close();
+            }
+            return iSuccess;
+        }
 
     }  
 }

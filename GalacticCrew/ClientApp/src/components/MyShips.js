@@ -11,6 +11,29 @@ const status = {
     shipBought: "shipBought"
 }
 
+const myShipsColumns = [{
+    dataField: 'shipName',
+    text: 'Ship Name',
+    sort: true
+}, {
+    dataField: 'shipType',
+    text: 'Type',
+    sort: true
+}, {
+    dataField: 'shipFuelCapacity',
+    text: 'Fuel Capacity',
+    sort: true
+}, {
+    dataField: 'shipLevel',
+    text: 'Level',
+    sort: true
+    },
+{
+    dataField: 'shipUpgradeCost',
+    text: 'Upgrade Cost',
+    sort: true
+}];
+
 export class MyShips extends Component {
     static displayName = MyShips.name;
 
@@ -23,7 +46,8 @@ export class MyShips extends Component {
             selecteRow: {},
             shipInformation: {},
             playerCurrency: -1,
-            unexpectedError:false
+            unexpectedError: false,
+            shipData: {}
         }
 
         this.rowCallBackFunc = this.rowCallBackFunc.bind(this);
@@ -37,6 +61,7 @@ export class MyShips extends Component {
     async componentDidMount() {
         console.log("Myships componentDidMount");
         console.log(this.props);
+
         this.setState({ playerCurrency: this.props.playerCurrency });
 
         let currency = await Market.FetchPlayerCurrency();
@@ -48,12 +73,38 @@ export class MyShips extends Component {
 
     rowCallBackFunc(row, isSelected) {
         this.setState({ hasShipID: true, shipID: row.shipID, selecteRow: row });
+        this.fetchMyShipInformation(row.shipID);
         console.log(row);
     }
 
     ShipInformation(info) {
         if (this.state.shipInformation.shipID != info.shipID) {
             this.setState({ shipInformation: info });
+        }
+    }
+
+    async fetchMyShipInformation(shipID) {
+        const response = await fetch('Api/myshipinformation/'+shipID+'',
+            {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "include"
+            });
+
+        console.log(response.status);
+
+        switch (response.status) {
+            case 200:
+                {
+                    const data = await response.json();
+                    this.setState({ shipData:data });
+                    console.log(data);
+                }
+                break;
+            default:
+                {
+                    console.log("Failed to get ship information");
+                }
+                break;
         }
     }
 
@@ -69,8 +120,9 @@ export class MyShips extends Component {
         switch (response.status) {
             case 200:
                 {
-                    var newValue = this.state.playerCurrency - this.state.shipInformation.shipUpgradeCost;
+                    var newValue = await Market.FetchPlayerCurrency()                  
                     this.setState({ playerCurrency: newValue });
+                    this.fetchMyShipInformation(this.state.shipID);
                 }
                 break;
             default:
@@ -82,10 +134,12 @@ export class MyShips extends Component {
     }
 
     OnUpgradeShip() {
-        this.fetchUpgradeShip(this.state.shipInformation.shipID);
+        this.fetchUpgradeShip(this.state.shipID);
     }
 
     render() {
+        console.log("shipinformatin in myships");
+        console.log(this.state.shipInformation);
         return (<div id="myShipsContainer">
             <div id="myShipsHeader">
                 <h1>Spacecrafts Owned</h1>
@@ -94,11 +148,10 @@ export class MyShips extends Component {
                 <MyShipsPanel hasRowCallback={true} rowCallback={this.rowCallBackFunc} />           
             </div>
             <div id="myShipInformationPanel">
-                <ShipInformationPanel hasShipID={this.state.hasShipID} shipID={this.state.shipID} shipInformationCallback={this.ShipInformation} />
+                {this.state.hasShipID ? ShipInformationPanel.renderShipInformation(this.state.shipData, myShipsColumns, "shipName"):<h1></h1>}
             </div>
             <div className="upgradeContainer">
-                <h1 id="UpgradeCost">{this.state.shipInformation.shipUpgradeCost}</h1>
-                <h1 id>{this.state.playerCurrency}</h1>
+                <h1 id>Your money: {this.state.playerCurrency}</h1>
                 <Button variant="primary" size="lg" onClick={this.OnUpgradeShip} disabled={!this.state.hasShipID}>
                     Upgrade ship
                 </Button>

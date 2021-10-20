@@ -71,6 +71,10 @@ namespace GalacticCrew.WebServer.Controllers
                 switch(iStatus)
                 {
                     case 1: return Ok("Success!");
+                    case -2: return BadRequest("You already own that ship!");
+                    case -3: return BadRequest("You can't afford that Ship!");
+                    case -4: return BadRequest("Database Error -4!");
+                    case -5: return BadRequest("Database Error -5!");
                     default: return UnprocessableEntity("Database exception error");
                 }
               

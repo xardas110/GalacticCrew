@@ -18,4 +18,15 @@ namespace GalacticCrew.WebServer.Models
     {
         public decimal currency { get; set; }
     }
+
+    public class UserShipAndMission
+    {
+        public int shipID { get; set; }
+        public int missionID { get; set; }
+    }
+
+    public class Nickname
+    {
+        public string nickName { get; set; }
+    }
 }

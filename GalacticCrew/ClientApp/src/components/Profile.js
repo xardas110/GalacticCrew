@@ -7,7 +7,8 @@ const status = {
     changeNickname: 1,
     nicknameForm: 2,
     profile: 3,
-    loading: 4  
+    loading: 4,
+    purchaseHistory: 5
 }
 
 export class Profile extends Component {
@@ -35,26 +36,35 @@ export class Profile extends Component {
                 credentials: "include",
             });
 
-        if (response.status == 200) {
-            const data = await response.json();
-            console.log("Response ok inside fetch profile data");
-            console.log(data);
-            if (data.nickName != null) {
-                this.setState({
-                    nickName: data.nickName,
-                    playerLevel: data.playerLevel,
-                    currency: data.currency,
-                    status: status.profile
-                })
-            } else {
-                this.setState({ status: status.nicknameForm });
-            }
-        } else {
-            console.log("profile fetch failed response");
-            console.log(response.status);
-            
-        }
 
+
+        switch (response.status) {
+            case 200:
+                {
+                    const data = await response.json();
+
+                    console.log("Response ok inside fetch profile data");
+                    console.log(data);
+
+                    if (data.nickName != null) {
+                        this.setState({
+                            nickName: data.nickName,
+                            playerLevel: data.playerLevel,
+                            currency: data.currency,
+                            status: status.profile
+                        })
+                    } else {
+                        this.setState({ status: status.nicknameForm });
+                    }
+                }
+                break;
+            default:
+                {
+                    console.log("profile fetch failed response");
+                    console.log(response.status);
+                }
+                break;
+        }
     }
 
     async SubmitNickname() {
@@ -66,14 +76,20 @@ export class Profile extends Component {
                 body: JSON.stringify({ userName: this.state.nickName })
             });
 
-        if (response.status === 200) {
 
-            console.log("Ok submit nickname");
-            this.FetchUserData();
-        }
-        else {
-            console.log("failed to submit username")
-            console.log(response.status);
+        switch (response.status) {
+            case 200:
+                {
+                    console.log("Ok submit nickname");
+                    this.FetchUserData();
+                }
+                break;
+            default:
+                {
+                    console.log("failed to submit username")
+                    console.log(response.status);
+                }
+                break;
         }
     }
 
@@ -102,19 +118,7 @@ export class Profile extends Component {
         </form>)
     }
 
-    OnClickChangeNick() {
-        
-    }
-
-    OnClickChangePass() {
-
-    }
-
-    OnClickCheckPurchase() {
-
-    }
-
-    GetProfile(nickname, level, currency) {
+    renderProfile(nickname, level, currency) {
         return (<div id="profileContainerInner">
             <div id="textContainer">
                 <h4 > Nickname:</h4>              
@@ -127,9 +131,9 @@ export class Profile extends Component {
                 <h4 > {currency}</h4> 
             </div>
             <div id="buttonContainer">
-                <button class="btn btn-outline-success" onClick={this.OnClickChangeNick } >Change Nickname</button>
-                <button class="btn btn-outline-danger" onClick={this.OnClickChangePass} >Change Password</button>
-                <button class="btn btn-outline-info" onClick={this.OnClickCheckPurchase} >Check Purchase History</button>
+                <button class="btn btn-outline-success" onClick={e => { this.setState({ status: status.changeNickname }) }} >Change Nickname</button>
+                <button class="btn btn-outline-danger" onClick={e => { this.setState({ status: status.changePassword }) }} >Change Password</button>
+                <button class="btn btn-outline-info" onClick={e => { this.setState({status:status.purchaseHistory}) }} >Check Purchase History</button>
             </div>
         </div>)
     }
@@ -141,12 +145,22 @@ export class Profile extends Component {
         switch (this.state.status) {
             case status.profile:
                 {
-                    content = this.GetProfile(this.state.nickName, this.state.playerLevel, this.state.currency);
+                    content = this.renderProfile(this.state.nickName, this.state.playerLevel, this.state.currency);
                 }
                 break;
             case status.changeNickname:
                 {
-                    content = <ChangeNickname />;
+                    content = <ChangeNickname setNickname={this.props.setNickname} />;
+                }
+                break;
+            case status.changePassword:
+                {
+                    content = <h1>Not implemented</h1>;
+                }
+                break;
+            case status.purchaseHistory:
+                {
+                    content = <h1>Not implemented</h1>;
                 }
                 break;
             case status.nicknameForm:

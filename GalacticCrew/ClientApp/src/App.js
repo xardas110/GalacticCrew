@@ -33,6 +33,8 @@ export default class App extends Component {
         this.FetchUserData = this.FetchUserData.bind(this);
         this.UpdateUserState = this.UpdateUserState.bind(this);
         this.UpdatePlayerCurrency = this.UpdatePlayerCurrency.bind(this);
+        this.UpdateNavbarNickname = this.UpdateNavbarNickname.bind(this);
+        this.UpdateNavbarShipName = this.UpdateNavbarShipName.bind(this);
         console.log("App logger: ");
         console.log(this.props);
     }
@@ -41,10 +43,25 @@ export default class App extends Component {
         this.setState({ user: userState });
     }
 
-    UpdatePlayerCurrency(newCurrency) {
-       
+    UpdatePlayerCurrency(newCurrency) {     
         var updatedData = this.state.user;
         updatedData.currency = newCurrency;
+        this.setState({ user: updatedData });
+    }
+
+    UpdateNavbarNickname(newNick) {
+        var updatedData = this.state.user;
+        console.log("Updatenickname app");
+        console.log(updatedData);
+        updatedData.nickname = newNick;
+        this.setState({ user: updatedData });
+    }
+
+    UpdateNavbarShipName(shipName) {
+        var updatedData = this.state.user;
+        console.log("UpdateNavbarShipName app");
+        console.log(updatedData);
+        updatedData.shipName = shipName;
         this.setState({ user: updatedData });
     }
 
@@ -61,7 +78,6 @@ export default class App extends Component {
             });
 
         console.log(response.status);
-
 
         switch (response.status) {
             case 200:
@@ -87,7 +103,6 @@ export default class App extends Component {
                 }
                 break;
         }
-
     }
 
     render() {
@@ -99,9 +114,9 @@ export default class App extends Component {
                     <Route exact path='/' component={Home} />
                     <Route path='/Register' component={() => <Register />} />
                     <Route path='/Login' component={() => <Login setUser={this.UpdateUserState} loggedIn={this.state.user.loggedIn} />} />
-                    <Route path='/Profile' component={() => <Profile />} />
+                    <Route path='/Profile' component={() => <Profile setNickname={this.UpdateNavbarNickname}/>} />
                     <Route path='/Missionpanel' component={() => <MissionPanel />} />
-                    <Route path='/MissionStatus' component={() => <MissionStatus />} />
+                    <Route path='/MissionStatus' component={() => <MissionStatus setShipName={this.UpdateNavbarShipName} />} />
                     <Route path='/Market' component={() => <Market setPlayerCurrency={this.UpdatePlayerCurrency} playerCurrency={this.state.user.currency} />} />
                     <Route path='/MyShips' component={() => <MyShips setPlayerCurrency={this.UpdatePlayerCurrency} playerCurrency={this.state.user.currency} />} />
                 </Container>
