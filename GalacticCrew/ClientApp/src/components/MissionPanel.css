@@ -80,3 +80,7 @@
     justify-content:space-around;
     flex-direction:column;
 }
+
+.table-bordered {
+    border: white !important;
+}

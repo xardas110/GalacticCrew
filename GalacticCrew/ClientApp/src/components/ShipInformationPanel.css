@@ -22,3 +22,31 @@
     height: 25%;
     width: 40%;
 }
+#missionInfoTableContainer {
+    border: solid;
+    border-color: #ffffff4d;
+    background-color: #16161396;
+    width: 100%;
+}
+
+.hc1 {
+    font-size: 2rem;
+    float: left;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    width: 50%;
+    white-space: nowrap;
+    font-family:monospace;
+}
+
+.rc1 {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    width: 100%;
+    font-size: 2rem;
+    white-space: nowrap;
+    font-family: monospace;
+}

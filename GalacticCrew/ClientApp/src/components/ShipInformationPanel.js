@@ -22,6 +22,29 @@ const marketColumns = [{
     dataField: 'shipCost',
     text: 'Cost',
     sort: true
+    }];
+
+const myShipsColumns = [{
+    dataField: 'shipName',
+    text: 'Ship Name',
+    sort: true
+}, {
+    dataField: 'shipType',
+    text: 'Type',
+    sort: true
+}, {
+    dataField: 'shipFuelCapacity',
+    text: 'Fuel Capacity',
+    sort: true
+}, {
+    dataField: 'shipLevel',
+    text: 'Level',
+    sort: true
+},
+{
+    dataField: 'shipUpgradeCost',
+    text: 'Upgrade Cost',
+    sort: true
 }];
 
 export class ShipInformationPanel extends Component {
@@ -91,8 +114,15 @@ export class ShipInformationPanel extends Component {
 
     static renderShipInformation(shipData, columns, keyField) {
         return (<Container id="missionInfoTableContainer">
-            <BootstrapTable responseive="sm" id="missionInfoTable" headerClasses="hc" rowClasses="rc" keyField={keyField } data={[shipData]} columns={columns} />
+            <BootstrapTable responseive="sm" id="missionInfoTable" headerClasses="hc1" rowClasses="rc1" keyField={keyField } data={[shipData]} columns={columns} />
             </Container>
+        )
+    }
+
+    static renderMyShipInformation(shipData) {
+        return (<Container id="missionInfoTableContainer">
+            <BootstrapTable responseive="sm" id="missionInfoTable" headerClasses="hc" rowClasses="rc" keyField="shipName" data={[shipData]} columns={myShipsColumns} />
+        </Container>
         )
     }
 

@@ -12,12 +12,10 @@ export class Home extends Component {
         //let content = this.state.LoggedIn ? this.welcome(this.state.UserName) : "You are not logged in"
     return (
       <div id="profileContainer">
-            <h1>Hello battlestar crew </h1>         
-        <p>Todo List:</p>
+            <h1>Battlestar Crew </h1>         
         <ul>
-          <li>Create register and login page with JWT token</li>
-          <li>Redirect user to pilot page</li>
-          <li>Create pilot interface</li>
+          <li>Currently most of the features are available on the site</li>
+          <li>Not all style and design is finished.</li>
             </ul>
       </div>
     );

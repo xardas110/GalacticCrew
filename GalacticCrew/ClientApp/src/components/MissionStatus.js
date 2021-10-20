@@ -14,6 +14,24 @@ const status = {
     NotStarted: "NotStarted",
 }
 
+const myShipsColumns = [{
+    dataField: 'shipName',
+    text: 'Ship Name',
+    sort: true
+}, {
+    dataField: 'shipType',
+    text: 'Type',
+    sort: true
+}, {
+    dataField: 'shipFuelCapacity',
+    text: 'Fuel Capacity',
+    sort: true
+}, {
+    dataField: 'shipLevel',
+    text: 'Level',
+    sort: true
+}];
+
 export class MissionStatus extends Component {
     static displayName = MissionStatus.name;
 
@@ -27,13 +45,15 @@ export class MissionStatus extends Component {
             redirectBackToMissionPanel: false,
             hasShipID: false,
             shipID: -1,
-            shipName:""
+            shipName: "",
+            shipData: {}
         }
         this.fetchOngoingMission = this.fetchOngoingMission.bind(this);
         this.RedirectBackToMissionPanel = this.RedirectBackToMissionPanel.bind(this);
         this.OnShipRowSelected = this.OnShipRowSelected.bind(this);
         this.OnStartMission = this.OnStartMission.bind(this);
-        this.OnCancelMission = this.OnCancelMission.bind(this);     
+        this.OnCancelMission = this.OnCancelMission.bind(this);
+        this.fetchMyShipInformation = this.fetchMyShipInformation.bind(this);
     }
 
     async fetchOngoingMission() {
@@ -105,6 +125,31 @@ export class MissionStatus extends Component {
         }
     }
 
+    async fetchMyShipInformation(shipID) {
+        const response = await fetch('Api/myshipinformation/' + shipID + '',
+            {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "include"
+            });
+
+        console.log(response.status);
+
+        switch (response.status) {
+            case 200:
+                {
+                    const data = await response.json();
+                    this.setState({ shipData: data });
+                    console.log(data);
+                }
+                break;
+            default:
+                {
+                    console.log("Failed to get ship information");
+                }
+                break;
+        }
+    }
+
     async fetchStartMission(shipID) {
         const response = await fetch('Api/StartAcceptedMission/'+shipID+'',
             {
@@ -156,6 +201,7 @@ export class MissionStatus extends Component {
                 shipID: row.shipID,
                 shipName: row.shipTitle
             })
+            this.fetchMyShipInformation(row.shipID);
         }
     }
 
@@ -190,7 +236,7 @@ export class MissionStatus extends Component {
                 <MyShipsPanel hasRowCallback={true} rowCallback={rowCallBackFunc} />
             </div>
             <div className="shipInformationPanel">
-                <ShipInformationPanel hasShipID={this.state.hasShipID} shipID={this.state.shipID} />
+                {this.state.hasShipID ? ShipInformationPanel.renderShipInformation(this.state.shipData, myShipsColumns, "shipName") : <h1></h1>}
             </div>
                 <div className="missionProbability">
                     <MissionProbability shipID={this.state.shipID} missionID={missionInformation.missionID}/>

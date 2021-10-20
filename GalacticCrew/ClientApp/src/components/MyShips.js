@@ -11,29 +11,6 @@ const status = {
     shipBought: "shipBought"
 }
 
-const myShipsColumns = [{
-    dataField: 'shipName',
-    text: 'Ship Name',
-    sort: true
-}, {
-    dataField: 'shipType',
-    text: 'Type',
-    sort: true
-}, {
-    dataField: 'shipFuelCapacity',
-    text: 'Fuel Capacity',
-    sort: true
-}, {
-    dataField: 'shipLevel',
-    text: 'Level',
-    sort: true
-    },
-{
-    dataField: 'shipUpgradeCost',
-    text: 'Upgrade Cost',
-    sort: true
-}];
-
 export class MyShips extends Component {
     static displayName = MyShips.name;
 
@@ -148,7 +125,7 @@ export class MyShips extends Component {
                 <MyShipsPanel hasRowCallback={true} rowCallback={this.rowCallBackFunc} />           
             </div>
             <div id="myShipInformationPanel">
-                {this.state.hasShipID ? ShipInformationPanel.renderShipInformation(this.state.shipData, myShipsColumns, "shipName"):<h1></h1>}
+                {this.state.hasShipID ? ShipInformationPanel.renderMyShipInformation(this.state.shipData):<h1></h1>}
             </div>
             <div className="upgradeContainer">
                 <h1 id>Your money: {this.state.playerCurrency}</h1>

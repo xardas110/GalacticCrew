@@ -25,6 +25,7 @@
     height: 100%;
     border: thick solid;
     border-color: gray;
+    background-color: #0f081bba;
 }
 .btn-primary {
     background-color: #ff0028 !important;

@@ -19,33 +19,6 @@ namespace GalacticCrew.WebServer.Services.Methods
             return missionRank + (missionRank * missionRank);
         }
 
-        static public float GetRatioBasedOnFuel(int shipLevel, decimal shipFuelCapacity, decimal missionDistance)
-       {
-            decimal fuelPrDistance = 20;
-            fuelPrDistance += (shipLevel * fuelPrDistance);
-            var steps = missionDistance / fuelPrDistance;
-
-            if (steps > 10)
-                return 0.5f;
-
-            return 1.0f;
-       }
-       
-        static public float GetRatioBasedOnLevel(int shipLevel, int missionRank)
-        {
-            var missionLevel = GetMissionLevel(missionRank);
-            var delta = missionLevel - shipLevel;
-
-            if (delta < 0)
-                return 1.0f;
-            else if (delta >= 0 && delta < 3)
-                return 0.7f;
-            else if (delta >= 3 && delta < 6)
-                return 0.3f;
-            else
-                return 0.05f;
-        }
-
         static public float GetRatioBasedOnType(string shipType, string missionType)
         {
             Dictionary<string, int> Types = new Dictionary<string, int>();
@@ -67,6 +40,32 @@ namespace GalacticCrew.WebServer.Services.Methods
 
             return 1.0f;
         }
+
+        static public float CalculateMissionProbability(string shipType, string missionType, int shipLevel, int PlayerLevel, int shipFuel, int missionDistance, int MissionRank)
+        {
+            float prob1 = (shipFuel / missionDistance) * 0.33f;
+            float prob2 = (shipLevel + PlayerLevel) / GetMissionLevel(MissionRank) * 0.34f;
+
+            float prob3 = 0.0f;
+            Dictionary<string, int> Types = new Dictionary<string, int>();
+            Types.Add("Mercenary Work", 2);
+            Types.Add("Trade", 1);
+            Types.Add("Delivery", 1);
+            Types.Add("Find Treasure", 3);
+            Types.Add("Piracy", 2);
+            Types.Add("Expedition", 4);
+
+            int iShipType = 0;
+            int iMissionType = 0;
+
+            if (Types.ContainsKey(shipType)) iShipType = Types[shipType];
+            if (Types.ContainsKey(missionType)) iMissionType = Types[missionType];
+            if (iMissionType == iShipType) prob3 = 1.0f * 0.33f;
+
+
+            return prob1 + prob2 + prob3;
+        }
+
         /// <summary>
         /// Mission probability for success
         /// </summary>
@@ -74,10 +73,7 @@ namespace GalacticCrew.WebServer.Services.Methods
         /// <returns>Returns probability in %</returns>
         static public float GetMissionProbability(MissionProbabilityInformation MPI)
         {
-            float result = 1.0f;
-            result *= MissionProbabilityCalculator.GetRatioBasedOnFuel(MPI.ShipLevel, MPI.ShipFuelCapacity, MPI.MissionDistance);
-            result *= MissionProbabilityCalculator.GetRatioBasedOnLevel(MPI.ShipLevel, MPI.MissionRank);
-            result *= MissionProbabilityCalculator.GetRatioBasedOnType(MPI.ShipType, MPI.MissionType);
+            float result = CalculateMissionProbability(MPI.ShipType, MPI.MissionType, MPI.ShipLevel, MPI.PlayerLevel, Convert.ToInt32(MPI.ShipFuelCapacity), Convert.ToInt32(MPI.MissionDistance), MPI.MissionRank);
             return result *= 100.0f;
         }
 
