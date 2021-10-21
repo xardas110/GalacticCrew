@@ -20,6 +20,9 @@ namespace GalacticCrew
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseKestrel();
+                    webBuilder.UseUrls("https://192.168.2.201:5001", "https://192.168.2.201:5000");
+                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                 });
     }

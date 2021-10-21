@@ -35,29 +35,8 @@ namespace GalacticCrew
                 configuration.RootPath = "ClientApp/build";
             });
 
-            /* Not MVC model, will use react
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters();
-
-                options.TokenValidationParameters.ValidateIssuer = true;
-                options.TokenValidationParameters.ValidateAudience = true;
-                options.TokenValidationParameters.ValidateLifetime = true;
-                options.TokenValidationParameters.ValidateIssuerSigningKey = true;
-                options.TokenValidationParameters.ValidIssuer = Configuration["Jwt:Issuer"];
-                options.TokenValidationParameters.ValidAudience = Configuration["Jwt:Issuer"];
-
-                //TODO: Access token key from appsettings.json and secure the key
-                options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TempKeykmdsngjknlmdsng"));
-                
-            });
-            */
-
             services.AddScoped<SecurityService, SecurityService>();
             services.AddScoped<QuerySQL, QuerySQL>();
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,10 +72,10 @@ namespace GalacticCrew
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
-
                 if (env.IsDevelopment())
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
+                    
                 }
             });
         }

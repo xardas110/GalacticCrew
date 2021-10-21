@@ -30,3 +30,8 @@
     height:100%;
     overflow: auto;
 }
+
+.missionStatusText{
+    padding-top:20%;
+    text-align:center;
+}

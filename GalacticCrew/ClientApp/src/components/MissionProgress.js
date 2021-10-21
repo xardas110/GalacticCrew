@@ -12,7 +12,9 @@ const status =
     complete: 3,
     redirectMissionPanel: 4,
     unexpectedError: 5,
-    failed:6
+    failed: 6,
+    redirectMyShips: 7,
+    redirectProfile: 8
 }
 
 export class MissionProgress extends Component {
@@ -148,12 +150,40 @@ export class MissionProgress extends Component {
                 break;
             case status.complete:
                 {
-                    content = (<h1>Mission Success!!</h1>);
+                    content = (<div className="missionStatusText">
+                        <h1>Mission Success!!</h1>
+                        <h3>You have been rewarded currency and XP</h3>
+                        <Button variant="primary" size="lg" onClick={e => { this.setState({ status: status.redirectMissionPanel }) }}>
+                            Go Mission Panel
+                        </Button>
+                        <Button variant="primary" size="lg" onClick={e => { this.setState({ status: status.redirectMyShips }) }}>
+                            Go WorkShop
+                        </Button>
+                    </div>);
+                }
+                break;
+            case status.redirectMyShips:
+                {
+                    return (<Redirect to="/MyShips"/>)
+                }
+                break;
+            case status.redirectMissionPanel:
+                {
+                    return (<Redirect to="/missionpanel" />)
                 }
                 break;
             case status.failed:
                 {
-                    content = (<h1>Mission failed!</h1>);
+                    content = (<div className="missionStatusText">
+                        <h1>Mission Failed!!</h1>
+                        <h3>No currency or XP rewarded :(</h3>
+                        <Button variant="primary" size="lg" onClick={e => { this.setState({ status: status.redirectMissionPanel }) }}>
+                            Go Mission Panel
+                        </Button>
+                        <Button variant="primary" size="lg" onClick={e => { this.setState({ status: status.redirectMyShips }) }}>
+                            Go WorkShop
+                        </Button>
+                    </div>);
                 }
                 break;
             default:

@@ -48,12 +48,18 @@ namespace GalacticCrew.WebServer.Services.Methods
 
             float prob3 = 0.0f;
             Dictionary<string, int> Types = new Dictionary<string, int>();
-            Types.Add("Mercenary Work", 2);
-            Types.Add("Trade", 1);
-            Types.Add("Delivery", 1);
-            Types.Add("Find Treasure", 3);
-            Types.Add("Piracy", 2);
+            //mission types
+            Types.Add("Mercenary Work", 1);
+            Types.Add("Trade", 3);
+            Types.Add("Find Treasure", 2);
             Types.Add("Expedition", 4);
+            Types.Add("Piracy", 1);
+
+            //ship types
+            Types.Add("Military", 1);
+            Types.Add("Cargo", 3);
+            Types.Add("Scout", 2);
+            Types.Add("Science", 4);
 
             int iShipType = 0;
             int iMissionType = 0;

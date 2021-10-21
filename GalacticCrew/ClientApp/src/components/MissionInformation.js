@@ -60,6 +60,10 @@ export class MissionInformation extends Component {
             dataField: 'missionDistance',
             text: 'Distance',
             sort: true
+            }, {
+                dataField: 'missionTime',
+                text: 'Mission Duration(Sec)',
+                sort: true
             }];
 
         console.log(this.state.missionInformation);
@@ -67,7 +71,7 @@ export class MissionInformation extends Component {
         return (<div id="missionInfoContainer">
             <Container id = "missionInfoTableContainer">
                 <BootstrapTable responseive="sm" id="missionInfoTable" headerClasses="hc" rowClasses="rc" keyField="missionTitle" data={[this.state.missionInformation]} columns={columns} />
-                <h1> </h1>
+                <h3 id="missionDesc">Desc: {this.state.missionInformation.missionDesc} </h3>
             </Container>
             <div className="d-grid gap-2">
                 <Button variant="primary" size="lg" onClick={this.props.AcceptMission}>
