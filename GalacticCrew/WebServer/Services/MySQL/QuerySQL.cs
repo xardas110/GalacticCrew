@@ -11,7 +11,7 @@ namespace GalacticCrew.WebServer.Services.MySQL
 {
     public class QuerySQL
     {
-        static private readonly string ConnectionString = "server=87.248.13.40;port=3306;userid=test;database=oblig2;SSL Mode=None;CharSet=utf8";
+        static private readonly string ConnectionString = "Enter string";
 
         /// <summary>
         /// Available missions (Missions that aren't inside the ongoing mission table)
